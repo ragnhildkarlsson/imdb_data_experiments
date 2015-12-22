@@ -15,6 +15,7 @@ TRAIN_DATA_FILE = "data/all_plots_train_delimeter"
 FILENAME_TRAIN_DATA_SUBSET = "list_train_data_subset"
 ENCODING="ISO-8859-1"
 INDEX_FOLDER = "index"
+STOP_WORD_FILE_PATH = "data/stop_word_list"
 
 def is_delimeter_line(line):
     break_line_matcher = '^---.*' 
@@ -55,6 +56,19 @@ def print_index_to_file(index, index_folder):
         posting_list_file = os.path.join(index_folder, word)
         pickle.dump(index[word], open(posting_list_file,'wb'))
         n_printed_words +=1
+
+def print_stop_word_list_to_file(index, stop_word_file_path):
+    n_words_in_corpus = sum([len(index[word][1]) for word in index])
+    print("n_words_in_corpus calcullated")
+    stop_words = []
+    for word in index:
+        word_freq = sum([post[1] for post in index[word]]) 
+        if (word_freq/n_words_in_corpus) > 0.25:
+            stop_words.append(word)
+    print('word_freq_calculated')
+    with open(stop_word_file_path, 'w') as f:
+        for stop_word in stop_words:
+                f.write(stop_word+'\n')
 
 def create_inverted_index_word(file_path, set_trainings_data_doc_numbers):
     index = {}
@@ -97,7 +111,7 @@ def create_inverted_index_bigram(file_path, set_trainings_data_doc_numbers):
                     document = document_processer.preprocess_document(document)
                     bigram_freqDist = nltk.FreqDist(nltk.bigrams(document)) 
                     for bigram in bigram_freqDist:
-                        if (not document_processer.is_stop_word(bigram[0])) or (not document_processer.is_stop_word(bigram[1])):            
+                        if (not document_processer.is_stop_word(bigram[0])) and (not document_processer.is_stop_word(bigram[1])):            
                             bigram_string = document_processer.bigram_to_string(bigram)
                             if not bigram_string in index:
                                 index[bigram_string] = []
@@ -114,5 +128,7 @@ print_train_data_subset_list_to_file(file_index_set, FILENAME_TRAIN_DATA_SUBSET,
 index = create_inverted_index_word(TRAIN_DATA_FILE,file_index_set)
 index_folder = os.path.join(ROOT_DATA_FOLDER, INDEX_FOLDER)
 print_index_to_file(index, index_folder)
-bigram_index = create_inverted_index_bigram(TRAIN_DATA_FILE,file_index_set)
-print_index_to_file(bigram_index, index_folder)
+print_stop_word_list_to_file(index,STOP_WORD_FILE_PATH)
+
+# bigram_index = create_inverted_index_bigram(TRAIN_DATA_FILE,file_index_set)
+# print_index_to_file(bigram_index, index_folder)
