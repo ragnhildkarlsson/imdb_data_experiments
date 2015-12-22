@@ -58,7 +58,7 @@ def print_index_to_file(index, index_folder):
         n_printed_words +=1
 
 def print_stop_word_list_to_file(index, stop_word_file_path):
-    n_words_in_corpus = sum([len(index[word][1]) for word in index])
+    n_words_in_corpus = sum([sum([post[1] for post in index[word]]) for word in index])
     print("n_words_in_corpus calcullated")
     stop_words = []
     for word in index:
@@ -130,5 +130,5 @@ index_folder = os.path.join(ROOT_DATA_FOLDER, INDEX_FOLDER)
 print_index_to_file(index, index_folder)
 print_stop_word_list_to_file(index,STOP_WORD_FILE_PATH)
 
-# bigram_index = create_inverted_index_bigram(TRAIN_DATA_FILE,file_index_set)
-# print_index_to_file(bigram_index, index_folder)
+bigram_index = create_inverted_index_bigram(TRAIN_DATA_FILE,file_index_set)
+print_index_to_file(bigram_index, index_folder)
