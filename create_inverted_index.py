@@ -66,8 +66,8 @@ def print_index_pickle_file(index, index_file):
     pickle.dump(index, open(index_file,'wb'))
 
 
-def print_stop_word_list_to_file(index_file, stop_word_file_path):
-    n_words_in_corpus = sum([sum([post[1] for post in get_posting_list(word, index_folder)]) for word in index_keys])
+def print_stop_word_list_to_file(index, stop_word_file_path):
+    n_words_in_corpus = sum([sum([post[1] for post in get_posting_list(word, index_folder)]) for word in index])
     print("n_words_in_corpus calcullated")
     stop_words = []
     for word in index:
@@ -132,12 +132,15 @@ def create_inverted_index_bigram(file_path, set_trainings_data_doc_numbers):
 
     return index                
 
-file_index_set = get_set_of_random_numbers(NUMBER_OF_DOCUMENTS, 120000)
-print_train_data_subset_list_to_file(file_index_set, FILENAME_TRAIN_DATA_SUBSET, ROOT_DATA_FOLDER, TRAIN_DATA_FOLDER)
-index = create_inverted_index_word(TRAIN_DATA_FILE,file_index_set)
-index_folder = os.path.join(ROOT_DATA_FOLDER, INDEX_FOLDER)
-print_index_to_file(index, index_folder)
-print_index_pickle_file(index, INDEX_PICKLE_FILE)
+# file_index_set = get_set_of_random_numbers(NUMBER_OF_DOCUMENTS, 120000)
+# print_train_data_subset_list_to_file(file_index_set, FILENAME_TRAIN_DATA_SUBSET, ROOT_DATA_FOLDER, TRAIN_DATA_FOLDER)
+# index = create_inverted_index_word(TRAIN_DATA_FILE,file_index_set)
+# index_folder = os.path.join(ROOT_DATA_FOLDER, INDEX_FOLDER)
+# print_index_to_file(index, index_folder)
+# print_index_pickle_file(index, INDEX_PICKLE_FILE)
 
+index = load_index_pickle(INDEX_PICKLE_FILE)
+print("INDEX LOADED")
+print_stop_word_list_to_file(index, STOP_WORD_FILE_PATH)
 # bigram_index = create_inverted_index_bigram(TRAIN_DATA_FILE,file_index_set)
 # print_index_to_file(bigram_index, index_folder)
