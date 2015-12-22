@@ -10,7 +10,6 @@ TEST_DATA_FOLDER = "data/test_data"
 FILENAME_TRAIN_DATA_SUBSET = "list_train_data_subset"
 INDEX_FOLDER = "data/index"
 
-
 def get_list_of_categories(test_data_folder):
     return next(os.walk(test_data_folder))[1]
 

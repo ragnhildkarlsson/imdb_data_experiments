@@ -16,6 +16,7 @@ FILENAME_TRAIN_DATA_SUBSET = "list_train_data_subset"
 ENCODING="ISO-8859-1"
 INDEX_FOLDER = "index"
 STOP_WORD_FILE_PATH = "data/stop_word_list"
+INDEX_PICKLE_FILE = "data/index_word_pickle_file"
 
 def is_delimeter_line(line):
     break_line_matcher = '^---.*' 
@@ -57,13 +58,21 @@ def print_index_to_file(index, index_folder):
         pickle.dump(index[word], open(posting_list_file,'wb'))
         n_printed_words +=1
 
-def print_stop_word_list_to_file(index, stop_word_file_path):
-    n_words_in_corpus = sum([sum([post[1] for post in index[word]]) for word in index])
+def load_index_pickle(file_path):
+    index = pickle.load( open(file_path, "rb" ) )
+    return index
+
+def print_index_pickle_file(index, index_file):
+    pickle.dump(index, open(index_file,'wb'))
+
+
+def print_stop_word_list_to_file(index_file, stop_word_file_path):
+    n_words_in_corpus = sum([sum([post[1] for post in get_posting_list(word, index_folder)]) for word in index_keys])
     print("n_words_in_corpus calcullated")
     stop_words = []
     for word in index:
-        word_freq = sum([post[1] for post in index[word]]) 
-        if (word_freq/n_words_in_corpus) > 0.25:
+        word_freq = sum([post[1] for post in get_posting_list(word)]) 
+        if (word_freq/n_words_in_corpus) > 0.10:
             stop_words.append(word)
     print('word_freq_calculated')
     with open(stop_word_file_path, 'w') as f:
@@ -128,7 +137,7 @@ print_train_data_subset_list_to_file(file_index_set, FILENAME_TRAIN_DATA_SUBSET,
 index = create_inverted_index_word(TRAIN_DATA_FILE,file_index_set)
 index_folder = os.path.join(ROOT_DATA_FOLDER, INDEX_FOLDER)
 print_index_to_file(index, index_folder)
-print_stop_word_list_to_file(index,STOP_WORD_FILE_PATH)
+print_index_pickle_file(index, INDEX_PICKLE_FILE)
 
-bigram_index = create_inverted_index_bigram(TRAIN_DATA_FILE,file_index_set)
-print_index_to_file(bigram_index, index_folder)
+# bigram_index = create_inverted_index_bigram(TRAIN_DATA_FILE,file_index_set)
+# print_index_to_file(bigram_index, index_folder)

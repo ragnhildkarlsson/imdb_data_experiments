@@ -7,12 +7,10 @@ def get_index_keys(index_folder):
     terms = document_processer.get_names_of_files_in_directory(index_folder)
     return set(terms) 
 
-
 def get_posting_list(word, index_folder):
     file_path = os.path.join(index_folder, word)
     posting_list = pickle.load( open( file_path, "rb" ) )
     return posting_list
-
 
 def intersection_search(posting_list_1, posting_list_2):
     result =[]
