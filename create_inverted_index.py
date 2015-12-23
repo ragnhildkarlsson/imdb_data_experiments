@@ -59,31 +59,16 @@ def print_index_to_file(index, index_folder):
         pickle.dump(index[word], open(posting_list_file,'wb'))
         n_printed_words +=1
 
-def load_index_pickle(file_path):
-    index = pickle.load( open(file_path, "rb" ) )
-    return index
-
 def print_index_pickle_file(index, index_file):
     pickle.dump(index, open(index_file,'wb'))
 
-
-def print_stop_word_list_to_file(index, stop_word_file_path):
-    n_words_in_corpus = sum([sum([post[1] for post in index[word]]) for word in index])
-    print("n_words_in_corpus calcullated")
-    stop_words = []
-    for word in index:
-        word_freq = sum([post[1] for post in index[word]]) 
-        if (word_freq/n_words_in_corpus) > 0.0011:
-            stop_words.append(word)
-    print('word_freq_calculated')
-    with open(stop_word_file_path, 'w') as f:
-        for stop_word in stop_words:
-                f.write(stop_word+'\n')
 
 def create_inverted_index_word(file_path, set_trainings_data_doc_numbers):
     index = {}
     plot_lines = []
     indexed_files =0
+    stop_words = stopwords.words('english')
+    stop_words = set(stop_words)
     with open(file_path, encoding="ISO-8859-1") as f:
         for line in f:
             if is_delimeter_line(line):
@@ -96,10 +81,11 @@ def create_inverted_index_word(file_path, set_trainings_data_doc_numbers):
                     document = document_processer.preprocess_document(document)
                     freqDist = nltk.FreqDist(document)
                     for word in freqDist:
-                        if not word in index:
-                            index[word] = []
-                        posting = (doc_id, freqDist[word])
-                        index[word].append(posting)
+                        if not word in stop_words:
+                            if not word in index:
+                                index[word] = []
+                            posting = (doc_id, freqDist[word])
+                            index[word].append(posting)
                 plot_lines = []
             else:
                 plot_lines.append(line)
