@@ -9,12 +9,13 @@ TRAIN_DATA_FOLDER = "data/train_data"
 TEST_DATA_FOLDER = "data/test_data"
 FILENAME_TRAIN_DATA_SUBSET = "list_train_data_subset"
 INDEX_FOLDER = "data/index"
+BIGRAM_INDEX_PICKLE_FILE = "data/index_bigram_pickle_file"
 
 def get_list_of_categories(test_data_folder):
     return next(os.walk(test_data_folder))[1]
 
 
-def calculate_dice_coefficients(category_name, root_data_folder, name_file_list, test_data_folder, train_data_folder, index_folder):
+def calculate_dice_coefficients(category_name, root_data_folder, name_file_list, test_data_folder, train_data_folder, index_folder, bigram_pickle_file):
     # returns {w1:dice(cat,w1),w2:dice(cat,w2)}
     terms = index.get_index_keys(index_folder)
     if not category_name in terms:
@@ -36,11 +37,12 @@ def calculate_dice_coefficients(category_name, root_data_folder, name_file_list,
                 dice_coefficents[word] = len(intersection)/(len(word_posting_list)+len(category_posting_list))
         calculated_posts +=1        
         # Calculate dice coefficients for bigram
+        bigram_index = index.load_index(bigram_pickle_file)
         bigram_freqDist = nltk.FreqDist(nltk.bigrams(document))
         for bigram in bigram_freqDist:
             bigram_string = document_processer.bigram_to_string(bigram)
-            if bigram_string not in dice_coefficents and bigram_string in terms:
-                bigram_posting_list = index.get_posting_list(bigram_string, index_folder)
+            if bigram_string not in dice_coefficents and bigram_string in bigram_index:
+                bigram_posting_list = bigram[bigram_string]
                 intersection = index.intersection_search(category_posting_list, bigram_posting_list)
                 dice_coefficents[bigram_string] = len(intersection)/(len(bigram_posting_list)+len(category_posting_list))
         

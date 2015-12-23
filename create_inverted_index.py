@@ -135,7 +135,7 @@ def create_inverted_index_bigram(file_path, set_trainings_data_doc_numbers):
 
     return index                
 
-# file_index_set = get_set_of_random_numbers(NUMBER_OF_DOCUMENTS, 120000)
+file_index_set = get_set_of_random_numbers(NUMBER_OF_DOCUMENTS, 120000)
 # print_train_data_subset_list_to_file(file_index_set, FILENAME_TRAIN_DATA_SUBSET, ROOT_DATA_FOLDER, TRAIN_DATA_FOLDER)
 # index = create_inverted_index_word(TRAIN_DATA_FILE,file_index_set)
 # index_folder = os.path.join(ROOT_DATA_FOLDER, INDEX_FOLDER)
