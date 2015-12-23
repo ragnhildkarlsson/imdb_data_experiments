@@ -16,7 +16,8 @@ FILENAME_TRAIN_DATA_SUBSET = "list_train_data_subset"
 ENCODING="ISO-8859-1"
 INDEX_FOLDER = "index"
 STOP_WORD_FILE_PATH = "data/stop_word_list"
-INDEX_PICKLE_FILE = "data/index_word_pickle_file"
+WORD_INDEX_PICKLE_FILE = "data/index_word_pickle_file"
+BIGRAM_INDEX_PICKLE_FILE = "data/index_bigram_pickle_file"
 
 def is_delimeter_line(line):
     break_line_matcher = '^---.*' 
@@ -67,12 +68,12 @@ def print_index_pickle_file(index, index_file):
 
 
 def print_stop_word_list_to_file(index, stop_word_file_path):
-    n_words_in_corpus = sum([sum([post[1] for post in get_posting_list(word, index_folder)]) for word in index])
+    n_words_in_corpus = sum([sum([post[1] for post in index[word]]) for word in index])
     print("n_words_in_corpus calcullated")
     stop_words = []
     for word in index:
-        word_freq = sum([post[1] for post in get_posting_list(word)]) 
-        if (word_freq/n_words_in_corpus) > 0.10:
+        word_freq = sum([post[1] for post in index[word]]) 
+        if (word_freq/n_words_in_corpus) > 0.0011:
             stop_words.append(word)
     print('word_freq_calculated')
     with open(stop_word_file_path, 'w') as f:
@@ -108,6 +109,8 @@ def create_inverted_index_bigram(file_path, set_trainings_data_doc_numbers):
     index = {}
     plot_lines = []
     indexed_files =0
+    stop_words = stopwords.words('english')
+    stop_words = set(stop_words)
     with open(file_path, encoding="ISO-8859-1") as f:
         for line in f:
             if is_delimeter_line(line):
@@ -120,7 +123,7 @@ def create_inverted_index_bigram(file_path, set_trainings_data_doc_numbers):
                     document = document_processer.preprocess_document(document)
                     bigram_freqDist = nltk.FreqDist(nltk.bigrams(document)) 
                     for bigram in bigram_freqDist:
-                        if (not document_processer.is_stop_word(bigram[0])) and (not document_processer.is_stop_word(bigram[1])):            
+                        if not (bigram[0] in stop_words) and (not bigram[1] in stop_words):            
                             bigram_string = document_processer.bigram_to_string(bigram)
                             if not bigram_string in index:
                                 index[bigram_string] = []
@@ -137,10 +140,11 @@ def create_inverted_index_bigram(file_path, set_trainings_data_doc_numbers):
 # index = create_inverted_index_word(TRAIN_DATA_FILE,file_index_set)
 # index_folder = os.path.join(ROOT_DATA_FOLDER, INDEX_FOLDER)
 # print_index_to_file(index, index_folder)
-# print_index_pickle_file(index, INDEX_PICKLE_FILE)
+# print_index_pickle_file(index, WORD_INDEX_PICKLE_FILE)
 
-index = load_index_pickle(INDEX_PICKLE_FILE)
-print("INDEX LOADED")
-print_stop_word_list_to_file(index, STOP_WORD_FILE_PATH)
-# bigram_index = create_inverted_index_bigram(TRAIN_DATA_FILE,file_index_set)
-# print_index_to_file(bigram_index, index_folder)
+# index = load_index_pickle(WORD_INDEX_PICKLE_FILE)
+# print("INDEX LOADED")
+# print_stop_word_list_to_file(index, STOP_WORD_FILE_PATH)
+bigram_index = create_inverted_index_bigram(TRAIN_DATA_FILE,file_index_set)
+print_index_pickle_file(bigram_index, BIGRAM_INDEX_PICKLE_FILE)
+#print_index_to_file(bigram_index, index_folder)
