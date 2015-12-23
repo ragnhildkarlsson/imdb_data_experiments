@@ -26,6 +26,7 @@ def calculate_dice_coefficients(category_name, root_data_folder, name_file_list,
     dice_coefficents = {}
     print(len(category_posting_list))
     calculated_posts = 0
+    bigram_index = index.load_index_pickle(bigram_pickle_file)
     for post in category_posting_list:
         #Calculate dice coefficient for single words
         document = document_processer.get_document_string(str(post[0]),train_data_folder)
@@ -35,14 +36,14 @@ def calculate_dice_coefficients(category_name, root_data_folder, name_file_list,
                 word_posting_list = index.get_posting_list(word, index_folder)
                 intersection = index.intersection_search(category_posting_list, word_posting_list)
                 dice_coefficents[word] = len(intersection)/(len(word_posting_list)+len(category_posting_list))
-        calculated_posts +=1        
+        calculated_posts +=1
+
         # Calculate dice coefficients for bigram
-        bigram_index = index.load_index(bigram_pickle_file)
         bigram_freqDist = nltk.FreqDist(nltk.bigrams(document))
         for bigram in bigram_freqDist:
             bigram_string = document_processer.bigram_to_string(bigram)
             if bigram_string not in dice_coefficents and bigram_string in bigram_index:
-                bigram_posting_list = bigram[bigram_string]
+                bigram_posting_list = bigram_index[bigram_string]
                 intersection = index.intersection_search(category_posting_list, bigram_posting_list)
                 dice_coefficents[bigram_string] = len(intersection)/(len(bigram_posting_list)+len(category_posting_list))
         
@@ -54,7 +55,7 @@ def calculate_top_100_neigbours(word_simularity_map):
     dice_list = sorted(word_simularity_map.items(),key=itemgetter(1), reverse=True)
     return dice_list[:100]
 
-d = calculate_dice_coefficients('art', ROOT_DATA_FOLDER, FILENAME_TRAIN_DATA_SUBSET, TEST_DATA_FOLDER, TRAIN_DATA_FOLDER, INDEX_FOLDER)
+d = calculate_dice_coefficients('art', ROOT_DATA_FOLDER, FILENAME_TRAIN_DATA_SUBSET, TEST_DATA_FOLDER, TRAIN_DATA_FOLDER, INDEX_FOLDER,BIGRAM_INDEX_PICKLE_FILE)
 
 print(calculate_top_100_neigbours(d))
 
