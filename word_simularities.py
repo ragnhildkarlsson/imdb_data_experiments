@@ -71,7 +71,7 @@ def get_dice_based_key_words(word_index, bigram_index, train_data_folder, catego
     
     dice_coefficents_bigram = calculate_dice_coefficients_bigram(category_posting_list, bigram_index,train_data_folder)
     top_100_dice_coefficients_bigram = calculate_top_100_neigbours(dice_coefficents_bigram.items())
-    top_dice_coefficients_bigram = [ b for b in top_100_dice_coefficients_bigram if not too_high_doc_frequency(b[0], frequency_limit,n_docs_in_corpus,word_index)]
+    top_dice_coefficients_bigram = [ b for b in top_100_dice_coefficients_bigram if not too_high_doc_frequency(b[0], frequency_limit,n_docs_in_corpus, bigram_index)]
 
     all_dice_coefficients = calculate_top_100_neigbours(top_dice_coefficients_word + top_dice_coefficients_bigram) 
 
