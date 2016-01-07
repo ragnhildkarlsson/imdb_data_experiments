@@ -67,17 +67,17 @@ def calculate_top_100_neigbours(word_simularity_list):
 def get_dice_based_key_words(word_index, bigram_index, train_data_folder, category_posting_list, weight_filter_limit, frequency_limit, n_docs_in_corpus):
     dice_coefficents_word = calculate_dice_coefficients_word(category_posting_list, word_index, train_data_folder)
     top_100_dice_coefficients_word = calculate_top_100_neigbours(dice_coefficents_word.items())
-    top_dice_coefficients_word = [w in top_100_dice_coefficients_word if not too_high_doc_frequency(w[0], frequency_limit,n_docs_in_corpus,word_index)]
+    top_dice_coefficients_word = [w for w in top_100_dice_coefficients_word if not too_high_doc_frequency(w[0], frequency_limit,n_docs_in_corpus,word_index)]
     
-    dice_coefficents_bigram(category_posting_list, bigram_index,train_data_folder)
+    dice_coefficents_bigram = calculate_dice_coefficients_bigram(category_posting_list, bigram_index,train_data_folder)
     top_100_dice_coefficients_bigram = calculate_top_100_neigbours(dice_coefficents_bigram.items())
-    top_dice_coefficients_bigram = [b in top_100_dice_coefficients_bigram if not too_high_doc_frequency(b[0], frequency_limit,n_docs_in_corpus,word_index)]
+    top_dice_coefficients_bigram = [ b for b in top_100_dice_coefficients_bigram if not too_high_doc_frequency(b[0], frequency_limit,n_docs_in_corpus,word_index)]
 
     all_dice_coefficients = calculate_top_100_neigbours(top_dice_coefficients_word + top_dice_coefficients_bigram) 
 
-    reference_words = [d in all_dice_coefficients if weight_filter_limit <= d[1]]
+    reference_words = [d for d in all_dice_coefficients if weight_filter_limit <= d[1]]
     
-    context_words = [d in all_dice_coefficients if weight_filter_limit > d[1]]
+    context_words = [d for d in all_dice_coefficients if weight_filter_limit > d[1]]
 
     return reference_words, context_words
 
@@ -85,7 +85,7 @@ def get_dice_based_key_words(word_index, bigram_index, train_data_folder, catego
 word_index = index.get_index(WORD_INDEX_PICKLE_FILE)
 category_posting_list = word_index['karate']
 bigram_index = index.get_index(BIGRAM_INDEX_PICKLE_FILE)
-
+print ('loaded index')
 r, c = get_dice_based_key_words(word_index, bigram_index, TRAIN_DATA_FOLDER,category_posting_list, 0.05,0.04,NUMBER_OF_DOCUMENTS)
 print(r)
 print(c)
