@@ -11,6 +11,7 @@ FILENAME_TRAIN_DATA_SUBSET = "list_train_data_subset"
 INDEX_FOLDER = "data/index"
 WORD_INDEX_PICKLE_FILE = "data/index_word_pickle_file"
 BIGRAM_INDEX_PICKLE_FILE = "data/index_bigram_pickle_file"
+NUMBER_OF_DOCUMENTS = 458712
 
 def get_list_of_categories(test_data_folder):
     return next(os.walk(test_data_folder))[1]
@@ -23,7 +24,8 @@ def calculate_dice_coefficients_word(category_posting_list, word_index, train_da
     print(len(category_posting_list))
     calculated_posts = 0
     for post in category_posting_list:
-        document = document_processer.get_document_string(str(post[0]),train_data_folder)
+        doc_file_mame = str(post[0])
+        document = document_processer.get_document_string(doc_file_mame, train_data_folder)
         document = document_processer.preprocess_document(document)
         for word in document:
             if word not in dice_coefficents and word in word_index:
@@ -39,7 +41,8 @@ def calculate_dice_coefficients_bigram(category_posting_list, bigram_index, trai
     dice_coefficents = {}
     calculated_posts = 0
     for post in category_posting_list:
-        document = document_processer.get_document_string(str(post[0]),train_data_folder)
+        doc_file_mame = str(post[0])
+        document = document_processer.get_document_string(doc_file_mame,train_data_folder)
         document = document_processer.preprocess_document(document)    
         bigram_freqDist = nltk.FreqDist(nltk.bigrams(document))
         for bigram in bigram_freqDist:
@@ -53,17 +56,42 @@ def calculate_dice_coefficients_bigram(category_posting_list, bigram_index, trai
             print(calculated_posts)
     return dice_coefficents
 
-def calculate_top_100_neigbours(word_simularity_map):
-    dice_list = sorted(word_simularity_map.items(),key=itemgetter(1), reverse=True)
+def too_high_doc_frequency(word, frequency_limit, n_docs_in_corpus, index):
+    n_docs = len(index[word])
+    return frequency_limit < (n_docs / n_docs_in_corpus)
+
+def calculate_top_100_neigbours(word_simularity_list):
+    dice_list = sorted(word_simularity_list, key=itemgetter(1), reverse=True)
     return dice_list[:100]
 
-import pdb
-pdb.set_trace()
+def get_dice_based_key_words(word_index, bigram_index, train_data_folder, category_posting_list, weight_filter_limit, frequency_limit, n_docs_in_corpus):
+    dice_coefficents_word = calculate_dice_coefficients_word(category_posting_list, word_index, train_data_folder)
+    top_100_dice_coefficients_word = calculate_top_100_neigbours(dice_coefficents_word.items())
+    top_dice_coefficients_word = [w in top_100_dice_coefficients_word if not too_high_doc_frequency(w[0], frequency_limit,n_docs_in_corpus,word_index)]
+    
+    dice_coefficents_bigram(category_posting_list, bigram_index,train_data_folder)
+    top_100_dice_coefficients_bigram = calculate_top_100_neigbours(dice_coefficents_bigram.items())
+    top_dice_coefficients_bigram = [b in top_100_dice_coefficients_bigram if not too_high_doc_frequency(b[0], frequency_limit,n_docs_in_corpus,word_index)]
+
+    all_dice_coefficients = calculate_top_100_neigbours(top_dice_coefficients_word + top_dice_coefficients_bigram) 
+
+    reference_words = [d in all_dice_coefficients if weight_filter_limit <= d[1]]
+    
+    context_words = [d in all_dice_coefficients if weight_filter_limit > d[1]]
+
+    return reference_words, context_words
+
+
 word_index = index.get_index(WORD_INDEX_PICKLE_FILE)
-category_posting_list = word_index['art']
-word_dice = calculate_dice_coefficients_word(category_posting_list, word_index, TRAIN_DATA_FOLDER)
-print(calculate_top_100_neigbours(word_dice))
+category_posting_list = word_index['karate']
 bigram_index = index.get_index(BIGRAM_INDEX_PICKLE_FILE)
-bigram_dice = calculate_dice_coefficients_bigram(category_posting_list, bigram_index, TRAIN_DATA_FOLDER)
-print(calculate_top_100_neigbours(bigram_dice))
+
+r, c = get_dice_based_key_words(word_index, bigram_index, TRAIN_DATA_FOLDER,category_posting_list, 0.05,0.04,NUMBER_OF_DOCUMENTS)
+print(r)
+print(c)
+
+# word_dice = calculate_dice_coefficients_word(category_posting_list, word_index, TRAIN_DATA_FOLDER)
+# print(calculate_top_100_neigbours(word_dice))
+# bigram_dice = calculate_dice_coefficients_bigram(category_posting_list, bigram_index, TRAIN_DATA_FOLDER)
+# print(calculate_top_100_neigbours(bigram_dice))
 
