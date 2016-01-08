@@ -6,16 +6,13 @@ import document_processer
 
 ROOT_DATA_FOLDER = "data"
 TRAIN_DATA_FOLDER = "data/train_data"
-TEST_DATA_FOLDER = "data/test_data"
 FILENAME_TRAIN_DATA_SUBSET = "list_train_data_subset"
-INDEX_FOLDER = "data/index"
 WORD_INDEX_PICKLE_FILE = "data/index_word_pickle_file"
 BIGRAM_INDEX_PICKLE_FILE = "data/index_bigram_pickle_file"
-NUMBER_OF_DOCUMENTS = 458712
+NUMBER_OF_DOCUMENTS = 220000
 
 def get_list_of_categories(test_data_folder):
     return next(os.walk(test_data_folder))[1]
-
 
 def calculate_dice_coefficients_word(category_posting_list, word_index, train_data_folder):
     # returns {w1:dice(cat,w1),w2:dice(cat,w2)}
@@ -82,16 +79,12 @@ def get_dice_based_key_words(word_index, bigram_index, train_data_folder, catego
     return reference_words, context_words
 
 
-word_index = index.get_index(WORD_INDEX_PICKLE_FILE)
-category_posting_list = word_index['karate']
-bigram_index = index.get_index(BIGRAM_INDEX_PICKLE_FILE)
-print ('loaded index')
-r, c = get_dice_based_key_words(word_index, bigram_index, TRAIN_DATA_FOLDER,category_posting_list, 0.05,0.04,NUMBER_OF_DOCUMENTS)
-print(r)
-print(c)
+# word_index = index.get_index(WORD_INDEX_PICKLE_FILE)
+# category_posting_list = word_index['karate']
+# bigram_index = index.get_index(BIGRAM_INDEX_PICKLE_FILE)
+# print ('loaded index')
+# r, c = get_dice_based_key_words(word_index, bigram_index, TRAIN_DATA_FOLDER,category_posting_list, 0.05,0.04,NUMBER_OF_DOCUMENTS)
+# print(r)
+# print(c)
 
-# word_dice = calculate_dice_coefficients_word(category_posting_list, word_index, TRAIN_DATA_FOLDER)
-# print(calculate_top_100_neigbours(word_dice))
-# bigram_dice = calculate_dice_coefficients_bigram(category_posting_list, bigram_index, TRAIN_DATA_FOLDER)
-# print(calculate_top_100_neigbours(bigram_dice))
 
