@@ -1,8 +1,12 @@
+import nltk
 import os
+
+
 import index
 import document_processer
 import doc_word_simularity
 import word_simularities
+
 
 TEST_DATA_FOLDER = "data/test_sub"
 
@@ -27,13 +31,14 @@ def get_docs_id_tfidf_map(test_files_path, word_index, bigram_index, n_docs):
             max_freq = len(word_index[word])
     doc_tfidf_map = {}
     # word_tf_idf_values
-    for doc_path in test_files:
-        document = document_processer.get_document_string(doc_file_name, train_data_folder)
+    for doc_path in test_files_path:
+        empty_stirng = ''
+        document = document_processer.get_document_string(doc_path, empty_stirng)
         document = document_processer.preprocess_document(document)
         doc_tfidf_map[doc_path] = doc_word_simularity.get_tf_idf_map(document, max_freq, n_docs, word_index)
 
-    for doc_path in test_files:
-        document = document_processer.get_document_string(doc_file_name, train_data_folder)
+    for doc_path in test_files_path:
+        document = document_processer.get_document_string(doc_path, empty_stirng)
         document = document_processer.preprocess_document(document)
         bigram_freqDist = nltk.FreqDist(nltk.bigrams(document))
         document = list(bigram_freqDist.keys())
