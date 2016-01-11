@@ -54,12 +54,12 @@ def get_docs_id_tfidf_map(test_files_path, word_index, bigram_index, n_docs):
     return doc_tfidf_map
 
 
-def get_ranked_documents(category, tfidf_map, n_docs, referens_words, context_words):
+def get_ranked_documents(category, tfidf_map, n_docs, reference_words, context_words):
     ranked_documents = []
     
     n_ranked_docs = 0
     for document in tfidf_map:
-        referens_simularity = doc_word_simularity.get_cosinus_simularity(tfidf_map[document],referens_words)
+        referens_simularity = doc_word_simularity.get_cosinus_simularity(tfidf_map[document],reference_words)
         context_simularity = 0
         if not referens_simularity == 0:
             context_simularity = doc_word_simularity.get_cosinus_simularity(tfidf_map[document], context_words)
@@ -79,10 +79,13 @@ word_index = index.get_index(WORD_INDEX_PICKLE_FILE)
 bigram_index = index.get_index(BIGRAM_INDEX_PICKLE_FILE)
 print('loaded index')
 tfidf_map = get_docs_id_tfidf_map(test_docs,word_index,bigram_index,NUMBER_OF_DOCUMENTS)
-category = "airplanes"
+category = "airplane"
 category_posting_list = word_index[category]
-referens_words, context_words = word_simularities.get_dice_based_key_words(word_index, bigram_index, TRAIN_DATA_FOLDER, category_posting_list, DICE_WEIGHT_FILTER_LIMIT, DICE_WORD_FREQUENCY_LIMIT, NUMBER_OF_DOCUMENTS)
-print(referens_words)
+reference_words, context_words = word_simularities.get_dice_based_key_words(word_index, bigram_index, TRAIN_DATA_FOLDER, category_posting_list, DICE_WEIGHT_FILTER_LIMIT, DICE_WORD_FREQUENCY_LIMIT, NUMBER_OF_DOCUMENTS)
+print(reference_words)
 print(context_words)
-ranked_docs = get_ranked_documents(category, tfidf_map, NUMBER_OF_DOCUMENTS, referens_words,context_words)
+reference_words = set([reference[0] for reference in reference_words])
+context_words = set([context_word[0] for context_word in context_words])
+
+ranked_docs = get_ranked_documents(category, tfidf_map, NUMBER_OF_DOCUMENTS, reference_words,context_words)
 print(ranked_docs)

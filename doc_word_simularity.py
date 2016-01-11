@@ -23,7 +23,8 @@ def get_cosinus_simularity(tf_idf_map, key_words):
     for term in tf_idf_map:
         if term in key_words:
             sum_common_terms += tf_idf_map[term]
-        sum_tf_idf_terms += tf_idf_map[term]
+        sum_tf_idf_terms += math.pow(tf_idf_map[term],2)
 
-    cosinus_similarity = sum_common_terms/(sum_tf_idf_terms+len(key_words))
+
+    cosinus_similarity = sum_common_terms/(math.sqrt(sum_tf_idf_terms)+math.sqrt(len(key_words)))
     return cosinus_similarity    
