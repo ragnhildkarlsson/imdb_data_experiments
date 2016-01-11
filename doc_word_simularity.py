@@ -15,6 +15,8 @@ def get_tf_idf_map(document, max_freq, n_docs, index):
         if term not in tf_idf_map:
             tf_idf_map[term] = tf * idf
 
+    return tf_idf_map
+
 def get_cosinus_simularity(tf_idf_map, key_words):
     sum_common_terms = 0
     sum_tf_idf_terms = 0
