@@ -10,7 +10,7 @@ def get_tf_idf_map(document, max_freq, n_docs, index):
         if term in index and term not in tf_idf_map: 
             posting_list = index[term]
             freq_term = sum([post[1] for post in posting_list]) 
-            tf = 0.5 + 0.5*(tf/max_freq)
+            tf = 0.5 + 0.5*(freq_term/max_freq)
             idf = math.log(1 + (n_docs/len(posting_list)))
         if term not in tf_idf_map:
             tf_idf_map[term] = tf * idf

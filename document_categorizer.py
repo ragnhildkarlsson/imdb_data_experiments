@@ -50,9 +50,6 @@ def get_docs_id_tfidf_map(test_files_path, word_index, bigram_index, n_docs):
 
 
 def get_ranked_documents(category, tfidf_map, n_docs, referens_words, context_words):
-
-    for document in tfidf_map:
-
     pass
     
 test_docs = get_all_test_files_list(TEST_DATA_FOLDER)
@@ -62,5 +59,5 @@ bigram_index = index.get_index(BIGRAM_INDEX_PICKLE_FILE)
 print('loaded index')
 tfidf_map = get_docs_id_tfidf_map(test_docs,word_index,bigram_index,NUMBER_OF_DOCUMENTS)
 print(tfidf_map)
-category = "airplanes"
-referens_words context_words = word_simularities() 
+# category = "airplanes"
+# referens_words context_words = word_simularities() 
