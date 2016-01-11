@@ -9,10 +9,14 @@ import word_simularities
 
 
 TEST_DATA_FOLDER = "data/test_sub"
+TRAIN_DATA_FOLDER = "data/train_data"
 
 WORD_INDEX_PICKLE_FILE = "data/index_word_pickle_file"
 BIGRAM_INDEX_PICKLE_FILE = "data/index_bigram_pickle_file"
 NUMBER_OF_DOCUMENTS = 220000
+DICE_WEIGHT_FILTER_LIMIT = 0.05
+DICE_WORD_FREQUENCY_LIMIT = 0.04
+
 
 
 def get_all_test_files_list(test_folder):
@@ -50,14 +54,28 @@ def get_docs_id_tfidf_map(test_files_path, word_index, bigram_index, n_docs):
 
 
 def get_ranked_documents(category, tfidf_map, n_docs, referens_words, context_words):
-    pass
+    ranked_documents = []
     
+    for document in tfidf_map:
+        referens_simularity = doc_word_simularity.get_cosinus_simularity(tfidf_map[document],referens_words)
+        context_simularity = 0
+        if not referens_simularity == 0:
+            context_simularity = doc_word_simularity.get_cosinus_simularity(tfidf_map[document], context_words)
+        simularity = context_simularity*referens_simularity
+        ranked_documents.append((document,simularity))
+    
+    ranked_documents = sorted(ranked_documents, key=itemgetter(1), reverse=True)
+    return ranked_documents
+
+
 test_docs = get_all_test_files_list(TEST_DATA_FOLDER)
 print(test_docs)
 word_index = index.get_index(WORD_INDEX_PICKLE_FILE)
 bigram_index = index.get_index(BIGRAM_INDEX_PICKLE_FILE)
 print('loaded index')
 tfidf_map = get_docs_id_tfidf_map(test_docs,word_index,bigram_index,NUMBER_OF_DOCUMENTS)
-print(tfidf_map)
-# category = "airplanes"
-# referens_words context_words = word_simularities() 
+category = "airplanes"
+category_posting_list = word_index[category]
+referens_words, context_words = word_simularities.get_dice_based_key_words(word_index, bigram_index, TRAIN_DATA_FOLDER, category_posting_list, DICE_WEIGHT_FILTER_LIMIT, DICE_WORD_FREQUENCY_LIMIT, NUMBER_OF_DOCUMENTS)
+ranked_docs = get_ranked_documents(category, tfidf_map,referens_words,context_words)
+print(ranked_docs)
