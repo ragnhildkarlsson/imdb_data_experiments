@@ -1,5 +1,6 @@
 import nltk
 import os
+from operator import itemgetter
 
 
 import index
@@ -65,7 +66,7 @@ def get_ranked_documents(category, tfidf_map, n_docs, referens_words, context_wo
         simularity = context_simularity*referens_simularity
         ranked_documents.append((document,simularity))
         if((n_ranked_docs % 100) == 0):
-            print n_ranked_docs
+            print(n_ranked_docs)
         n_ranked_docs += 1
 
     ranked_documents = sorted(ranked_documents, key=itemgetter(1), reverse=True)
@@ -83,5 +84,5 @@ category_posting_list = word_index[category]
 referens_words, context_words = word_simularities.get_dice_based_key_words(word_index, bigram_index, TRAIN_DATA_FOLDER, category_posting_list, DICE_WEIGHT_FILTER_LIMIT, DICE_WORD_FREQUENCY_LIMIT, NUMBER_OF_DOCUMENTS)
 print(referens_words)
 print(context_words)
-ranked_docs = get_ranked_documents(category, tfidf_map,NUMBER_OF_DOCUMENTS, referens_words,context_words)
+ranked_docs = get_ranked_documents(category, tfidf_map, NUMBER_OF_DOCUMENTS, referens_words,context_words)
 print(ranked_docs)
