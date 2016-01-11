@@ -56,6 +56,7 @@ def get_docs_id_tfidf_map(test_files_path, word_index, bigram_index, n_docs):
 def get_ranked_documents(category, tfidf_map, n_docs, referens_words, context_words):
     ranked_documents = []
     
+    n_ranked_docs = 0
     for document in tfidf_map:
         referens_simularity = doc_word_simularity.get_cosinus_simularity(tfidf_map[document],referens_words)
         context_simularity = 0
@@ -63,7 +64,10 @@ def get_ranked_documents(category, tfidf_map, n_docs, referens_words, context_wo
             context_simularity = doc_word_simularity.get_cosinus_simularity(tfidf_map[document], context_words)
         simularity = context_simularity*referens_simularity
         ranked_documents.append((document,simularity))
-    
+        if((n_ranked_docs % 100) == 0):
+            print n_ranked_docs
+        n_ranked_docs += 1
+
     ranked_documents = sorted(ranked_documents, key=itemgetter(1), reverse=True)
     return ranked_documents
 
@@ -77,5 +81,7 @@ tfidf_map = get_docs_id_tfidf_map(test_docs,word_index,bigram_index,NUMBER_OF_DO
 category = "airplanes"
 category_posting_list = word_index[category]
 referens_words, context_words = word_simularities.get_dice_based_key_words(word_index, bigram_index, TRAIN_DATA_FOLDER, category_posting_list, DICE_WEIGHT_FILTER_LIMIT, DICE_WORD_FREQUENCY_LIMIT, NUMBER_OF_DOCUMENTS)
-ranked_docs = get_ranked_documents(category, tfidf_map,referens_words,context_words)
+print(referens_words)
+print(context_words)
+ranked_docs = get_ranked_documents(category, tfidf_map,NUMBER_OF_DOCUMENTS, referens_words,context_words)
 print(ranked_docs)
