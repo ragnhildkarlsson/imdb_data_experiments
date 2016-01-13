@@ -14,6 +14,8 @@ TEST_DATA_FOLDER = "data/test_data"
 TEST_DATA_ALL_CATEGORIES_PICKLE = "data/all_categories_pickle"
 TEST_DATA_TF_IDF_MAP_PICKLE = "data/tf_idf_map_pickle"
 TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE = "data/categorized_documents_pickle"
+TEST_DATA_REFERENCE_WORDS_DICE = "data/test_reference_words_dice"
+TEST_DATA_CONTEXT_WORDS_DICE = "data/test_context_words_dice"
 
 TRAIN_DATA_FOLDER = "data/train_data"
 WORD_INDEX_PICKLE_FILE = "data/index_word_pickle_file"
@@ -25,8 +27,6 @@ DICE_WORD_FREQUENCY_LIMIT = 0.04
 TEST_DATA_CATEGORY_HIEARACHY = {'religion':{'christianity','buddhism','hinduism','islam','judaism'},'christianity':{'christmas'},'sport':{'baseball','basketball','bicyckle','boxing','football','golf','hockey','skiing','soccer','surfing','swimming','tennis','wrestling','horseracing','olympic_games'},\
                                 'water_sport':{'surfing','swimming'}, 'motoring':{'motorcycle','car'}, 'nature':{'animal'},'art':{'cinema','theater','music','opera','classical_music', 'jazz','pop', 'country_music','hip hop', 'dance'}, 'music':{'opera','classical_music','jazz','pop', 'country_music','hip_hop'},\
                                 'science':{'medicine','technology','pyscology'},'medicine':{'disability'}, 'education':{'school','collage'}, 'crime':{'prision','mafia','drugs','fraud','gambling','terroism'}}
-
-
 
 def load_test_data_pickle(file_path):
     resourse = pickle.load( open(file_path, "rb" ) )
@@ -105,25 +105,33 @@ def get_ranked_documents(category, tfidf_map, n_docs, reference_words, context_w
     ranked_documents = sorted(ranked_documents, key=itemgetter(1), reverse=True)
     return ranked_documents
 
+def create_dice_keyword_maps(categories, word_index, bigram_index):
+    reference_words = {}
+    context_words = {}
+    for category in categories:
+        #default values
+        r = [category]
+        c = []
+        if category not in word_index and category not in bigram_index:
+            print('WARNING: Category not in index: '+ category)
+        if '_' in category:
+            category_posting_list = bigram_index[category]
+            r,c = word_simularities.get_dice_based_key_words(word_index, bigram_index, TRAIN_DATA_FOLDER, category_posting_list, DICE_WEIGHT_FILTER_LIMIT, DICE_WORD_FREQUENCY_LIMIT, NUMBER_OF_DOCUMENTS)
+        else:
+            category_posting_list = word_index[category]
+            r,c = word_simularities.get_dice_based_key_words(word_index, bigram_index, TRAIN_DATA_FOLDER, category_posting_list, DICE_WEIGHT_FILTER_LIMIT, DICE_WORD_FREQUENCY_LIMIT, NUMBER_OF_DOCUMENTS)
+        print(r)
+        print(c)
+        reference_words[category] = r
+        context_words[category] = c
+    return reference_words, context_words    
+ 
+def dice_based_categorisation(test_categories, tf_idf_map, categorized_docs, category_hierarchy, n_docs, pr_evaluation_scale):
+    pass    
 
-
-def dice_based_categorisation(test_categories, categorized_docs, document_texts, word_index, bigram_index, category_hierarchy, n_docs):
-    tfidf_map = get_docs_id_tfidf_map(document_texts, word_index, bigram_index, n_docs)
-
-
-
-all_categories, document_texts, doc_category_map = create_test_data_set(TEST_DATA_FOLDER)
-print_test_data_pickle(doc_category_map, TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
-print_test_data_pickle(all_categories, TEST_DATA_ALL_CATEGORIES_PICKLE)
-
-word_index = index.get_index(WORD_INDEX_PICKLE_FILE)
-bigram_index = index.get_index(BIGRAM_INDEX_PICKLE_FILE)
-print('loaded index')
-tfidf_map = create_docs_id_tfidf_map(document_texts,word_index, bigram_index, NUMBER_OF_DOCUMENTS)
-print('created tfidf_map')
-print_test_data_pickle(tfidf_map, TEST_DATA_TF_IDF_MAP_PICKLE)
-
-
+# test_categories = categories = {'airplane', 'aliens', 'animals', 'art', 'baseball', 'basketball','bicyckle', 'boxing', 'buddhism', 'bussiness','car','christianity', 'christmas','cinema','classical music'}
+# tfidf_map = load_test_data_pickle(TEST_DATA_TF_IDF_MAP_PICKLE)
+# categorized_docs = load_test_data_pickle(TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
 
 
 # category = "airplane"
@@ -135,3 +143,26 @@ print_test_data_pickle(tfidf_map, TEST_DATA_TF_IDF_MAP_PICKLE)
 # context_words = set([context_word[0] for context_word in context_words])
 # ranked_docs = get_ranked_documents(category, tfidf_map, NUMBER_OF_DOCUMENTS, reference_words,context_words)
 # print(ranked_docs)
+
+
+
+# Create procedure
+
+# all_categories, document_texts, doc_category_map = create_test_data_set(TEST_DATA_FOLDER)
+# print_test_data_pickle(doc_category_map, TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
+# print_test_data_pickle(all_categories, TEST_DATA_ALL_CATEGORIES_PICKLE)
+
+# word_index = index.get_index(WORD_INDEX_PICKLE_FILE)
+# bigram_index = index.get_index(BIGRAM_INDEX_PICKLE_FILE)
+# print('loaded index')
+# tfidf_map = create_docs_id_tfidf_map(document_texts,word_index, bigram_index, NUMBER_OF_DOCUMENTS)
+# print('created tfidf_map')
+# print_test_data_pickle(tfidf_map, TEST_DATA_TF_IDF_MAP_PICKLE)
+word_index = index.get_index(WORD_INDEX_PICKLE_FILE)
+bigram_index = index.get_index(BIGRAM_INDEX_PICKLE_FILE)
+print('loaded index')
+all_categories = load_test_data_pickle(TEST_DATA_ALL_CATEGORIES_PICKLE)
+all_categories = [c for c in all_categories if not c =="no_category"]
+reference_words, context_words, create_dice_keyword_maps(all_categories, word_index,bigram_index)
+print_test_data_pickle(reference_words,TEST_DATA_REFERENCE_WORDS_DICE)
+print_test_data_pickle(reference_words,TEST_DATA_CONTEXT_WORDS_DICE)
