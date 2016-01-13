@@ -17,7 +17,7 @@ def get_list_of_categories(test_data_folder):
 def calculate_dice_coefficients_word(category_posting_list, word_index, train_data_folder):
     # returns {w1:dice(cat,w1),w2:dice(cat,w2)}
     dice_coefficents = {}
-    print("Number of docs with the category name")
+    print("Number of docs")
     print(len(category_posting_list))
     calculated_posts = 0
     for post in category_posting_list:
