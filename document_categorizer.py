@@ -86,25 +86,6 @@ def create_docs_id_tfidf_map(document_texts, word_index, bigram_index, n_docs):
 
     return doc_tfidf_map
 
-
-def get_ranked_documents(category, tfidf_map, n_docs, reference_words, context_words):
-    ranked_documents = []
-    
-    n_ranked_docs = 0
-    for document in tfidf_map:
-        referens_simularity = doc_word_simularity.get_cosinus_simularity(tfidf_map[document],reference_words)
-        context_simularity = 0
-        if not referens_simularity == 0:
-            context_simularity = doc_word_simularity.get_cosinus_simularity(tfidf_map[document], context_words)
-        simularity = context_simularity*referens_simularity
-        ranked_documents.append((document,simularity))
-        if((n_ranked_docs % 100) == 0):
-            print(n_ranked_docs)
-        n_ranked_docs += 1
-
-    ranked_documents = sorted(ranked_documents, key=itemgetter(1), reverse=True)
-    return ranked_documents
-
 def create_dice_keyword_maps(categories, word_index, bigram_index):
     reference_words = {}
     context_words = {}
@@ -128,8 +109,30 @@ def create_dice_keyword_maps(categories, word_index, bigram_index):
         reference_words[category] = r
         context_words[category] = c
     return reference_words, context_words    
+
+
+def get_ranked_documents(category, tfidf_map, n_docs, reference_words, context_words):
+    ranked_documents = []
+    
+    n_ranked_docs = 0
+    for document in tfidf_map:
+        referens_simularity = doc_word_simularity.get_cosinus_simularity(tfidf_map[document],reference_words)
+        context_simularity = 0
+        if not referens_simularity == 0:
+            context_simularity = doc_word_simularity.get_cosinus_simularity(tfidf_map[document], context_words)
+        simularity = context_simularity*referens_simularity
+        ranked_documents.append((document,simularity))
+        if((n_ranked_docs % 100) == 0):
+            print(n_ranked_docs)
+        n_ranked_docs += 1
+
+    ranked_documents = sorted(ranked_documents, key=itemgetter(1), reverse=True)
+    return ranked_documents
  
-def dice_based_categorisation(test_categories, tf_idf_map, categorized_docs, category_hierarchy, n_docs, pr_evaluation_scale):
+def dice_based_categorisation(test_categories, tf_idf_map,
+                              categorized_docs, category_hierarchy,
+                              n_docs, repr_evaluation_scale):
+
     pass    
 
 # test_categories = categories = {'airplane', 'aliens', 'animals', 'art', 'baseball', 'basketball','bicyckle', 'boxing', 'buddhism', 'bussiness','car','christianity', 'christmas','cinema','classical music'}
@@ -151,21 +154,23 @@ def dice_based_categorisation(test_categories, tf_idf_map, categorized_docs, cat
 
 # Create procedure
 
-all_categories, document_texts, doc_category_map = create_test_data_set(TEST_DATA_FOLDER)
-print_test_data_pickle(doc_category_map, TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
-print_test_data_pickle(all_categories, TEST_DATA_ALL_CATEGORIES_PICKLE)
+# all_categories, document_texts, doc_category_map = create_test_data_set(TEST_DATA_FOLDER)
+# print_test_data_pickle(doc_category_map, TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
+# print_test_data_pickle(all_categories, TEST_DATA_ALL_CATEGORIES_PICKLE)
 
-word_index = index.get_index(WORD_INDEX_PICKLE_FILE)
-bigram_index = index.get_index(BIGRAM_INDEX_PICKLE_FILE)
-print('loaded index')
-tfidf_map = create_docs_id_tfidf_map(document_texts,word_index, bigram_index, NUMBER_OF_DOCUMENTS)
-print('created tfidf_map')
-print_test_data_pickle(tfidf_map, TEST_DATA_TF_IDF_MAP_PICKLE)
+# word_index = index.get_index(WORD_INDEX_PICKLE_FILE)
+# bigram_index = index.get_index(BIGRAM_INDEX_PICKLE_FILE)
+# print('loaded index')
+# tfidf_map = create_docs_id_tfidf_map(document_texts,word_index, bigram_index, NUMBER_OF_DOCUMENTS)
+# print('created tfidf_map')
+# print_test_data_pickle(tfidf_map, TEST_DATA_TF_IDF_MAP_PICKLE)
 
 all_categories = load_test_data_pickle(TEST_DATA_ALL_CATEGORIES_PICKLE)
 all_categories = [c for c in all_categories if not c =="no_category"]
 print(all_categories)
-
+word_index = index.get_index(WORD_INDEX_PICKLE_FILE)
+bigram_index = index.get_index(BIGRAM_INDEX_PICKLE_FILE)
 reference_words, context_words =  create_dice_keyword_maps(all_categories, word_index,bigram_index)
 print_test_data_pickle(reference_words,TEST_DATA_REFERENCE_WORDS_DICE)
-print_test_data_pickle(reference_words,TEST_DATA_CONTEXT_WORDS_DICE)
+print_test_data_pickle(context_words,TEST_DATA_CONTEXT_WORDS_DICE)
+
