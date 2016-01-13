@@ -11,11 +11,11 @@ import word_simularities
 
 
 TEST_DATA_FOLDER = "data/test_data"
-TEST_DATA_ALL_CATEGORIES_PICKLE = "data/all_categories_pickle"
-TEST_DATA_TF_IDF_MAP_PICKLE = "data/tf_idf_map_pickle"
-TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE = "data/categorized_documents_pickle"
-TEST_DATA_REFERENCE_WORDS_DICE = "data/test_reference_words_dice"
-TEST_DATA_CONTEXT_WORDS_DICE = "data/test_context_words_dice"
+TEST_DATA_ALL_CATEGORIES_PICKLE = "data/test_data_pickles/all_categories_pickle"
+TEST_DATA_TF_IDF_MAP_PICKLE = "data/test_data_pickles/tf_idf_map_pickle"
+TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE = "data/test_data_pickles/categorized_documents_pickle"
+TEST_DATA_REFERENCE_WORDS_DICE = "data/test_data_pickles/test_reference_words_dice"
+TEST_DATA_CONTEXT_WORDS_DICE = "data/test_data_pickles/test_context_words_dice"
 
 TRAIN_DATA_FOLDER = "data/train_data"
 WORD_INDEX_PICKLE_FILE = "data/index_word_pickle_file"
@@ -114,12 +114,15 @@ def create_dice_keyword_maps(categories, word_index, bigram_index):
         c = []
         if category not in word_index and category not in bigram_index:
             print('WARNING: Category not in index: '+ category)
-        if '_' in category:
-            category_posting_list = bigram_index[category]
-            r,c = word_simularities.get_dice_based_key_words(word_index, bigram_index, TRAIN_DATA_FOLDER, category_posting_list, DICE_WEIGHT_FILTER_LIMIT, DICE_WORD_FREQUENCY_LIMIT, NUMBER_OF_DOCUMENTS)
         else:
-            category_posting_list = word_index[category]
-            r,c = word_simularities.get_dice_based_key_words(word_index, bigram_index, TRAIN_DATA_FOLDER, category_posting_list, DICE_WEIGHT_FILTER_LIMIT, DICE_WORD_FREQUENCY_LIMIT, NUMBER_OF_DOCUMENTS)
+            if '_' in category:
+                category_posting_list = bigram_index[category]
+                r,c = word_simularities.get_dice_based_key_words(word_index, bigram_index, TRAIN_DATA_FOLDER, category_posting_list, DICE_WEIGHT_FILTER_LIMIT, DICE_WORD_FREQUENCY_LIMIT, NUMBER_OF_DOCUMENTS)
+            else:
+                category_posting_list = word_index[category]
+                r,c = word_simularities.get_dice_based_key_words(word_index, bigram_index, TRAIN_DATA_FOLDER, category_posting_list, DICE_WEIGHT_FILTER_LIMIT, DICE_WORD_FREQUENCY_LIMIT, NUMBER_OF_DOCUMENTS)
+        if not category in r:
+            r.append(category)
         print(r)
         print(c)
         reference_words[category] = r
@@ -148,21 +151,21 @@ def dice_based_categorisation(test_categories, tf_idf_map, categorized_docs, cat
 
 # Create procedure
 
-# all_categories, document_texts, doc_category_map = create_test_data_set(TEST_DATA_FOLDER)
-# print_test_data_pickle(doc_category_map, TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
-# print_test_data_pickle(all_categories, TEST_DATA_ALL_CATEGORIES_PICKLE)
+all_categories, document_texts, doc_category_map = create_test_data_set(TEST_DATA_FOLDER)
+print_test_data_pickle(doc_category_map, TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
+print_test_data_pickle(all_categories, TEST_DATA_ALL_CATEGORIES_PICKLE)
 
-# word_index = index.get_index(WORD_INDEX_PICKLE_FILE)
-# bigram_index = index.get_index(BIGRAM_INDEX_PICKLE_FILE)
-# print('loaded index')
-# tfidf_map = create_docs_id_tfidf_map(document_texts,word_index, bigram_index, NUMBER_OF_DOCUMENTS)
-# print('created tfidf_map')
-# print_test_data_pickle(tfidf_map, TEST_DATA_TF_IDF_MAP_PICKLE)
 word_index = index.get_index(WORD_INDEX_PICKLE_FILE)
 bigram_index = index.get_index(BIGRAM_INDEX_PICKLE_FILE)
 print('loaded index')
+tfidf_map = create_docs_id_tfidf_map(document_texts,word_index, bigram_index, NUMBER_OF_DOCUMENTS)
+print('created tfidf_map')
+print_test_data_pickle(tfidf_map, TEST_DATA_TF_IDF_MAP_PICKLE)
+
 all_categories = load_test_data_pickle(TEST_DATA_ALL_CATEGORIES_PICKLE)
 all_categories = [c for c in all_categories if not c =="no_category"]
-reference_words, context_words, create_dice_keyword_maps(all_categories, word_index,bigram_index)
+print(all_categories)
+
+reference_words, context_words =  create_dice_keyword_maps(all_categories, word_index,bigram_index)
 print_test_data_pickle(reference_words,TEST_DATA_REFERENCE_WORDS_DICE)
 print_test_data_pickle(reference_words,TEST_DATA_CONTEXT_WORDS_DICE)
