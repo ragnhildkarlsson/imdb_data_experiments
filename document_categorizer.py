@@ -184,12 +184,11 @@ def evaluate_categorization(categorized_documents, correct_categorization,
 
 def get_summuerized_f1_scores(evaluation,  correct_categorization,
                              evalutation_point, n_correct_categorized_docs_key):
-    
     n_categorized_docs = sum([len(correct_categorization[category]) for category in correct_categorization if category in evaluation])
     sum_correct_ranked_docs = sum([evaluation[category][eval_point][n_correct_categorized_docs_key] for category in evalution])
     sum_ranked_docs = sum([evaluation[category][eval_point][n_correct_categorized_docs_key] for category in evalution])
-    precission = 
-    , recall,
+    # precission = 
+    # , recall,
 
             
 
@@ -197,11 +196,12 @@ def get_summuerized_f1_scores(evaluation,  correct_categorization,
 # tf_idf_map = load_test_data_pickle(TEST_DATA_TF_IDF_MAP_PICKLE)
 # categorized_docs = load_test_data_pickle(TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
 
-# CREATE EVAL SCALE list(np.arange(0,1,0.5)) appen 1.0
+# CREATE EVAL SCALE list(np.arange(0,1,0.5)) append 1.0
 
-
-
-
+reference_words_map = load_test_data_pickle(TEST_DATA_REFERENCE_WORDS_DICE)
+context_words_map = load_test_data_pickle(TEST_DATA_CONTEXT_WORDS_DICE)
+print(reference_words_map)
+print(context_words_map)
 
 
 
@@ -230,12 +230,12 @@ def get_summuerized_f1_scores(evaluation,  correct_categorization,
 # print('created tf_idf_map')
 # print_test_data_pickle(tf_idf_map, TEST_DATA_TF_IDF_MAP_PICKLE)
 
-all_categories = load_test_data_pickle(TEST_DATA_ALL_CATEGORIES_PICKLE)
-all_categories = [c for c in all_categories if not c =="no_category"]
-print(all_categories)
-word_index = index.get_index(WORD_INDEX_PICKLE_FILE)
-bigram_index = index.get_index(BIGRAM_INDEX_PICKLE_FILE)
-reference_words, context_words =  create_dice_keyword_maps(all_categories, word_index,bigram_index)
-print_test_data_pickle(reference_words,TEST_DATA_REFERENCE_WORDS_DICE)
-print_test_data_pickle(context_words,TEST_DATA_CONTEXT_WORDS_DICE)
+# all_categories = load_test_data_pickle(TEST_DATA_ALL_CATEGORIES_PICKLE)
+# all_categories = [c for c in all_categories if not c =="no_category"]
+# print(all_categories)
+# word_index = index.get_index(WORD_INDEX_PICKLE_FILE)
+# bigram_index = index.get_index(BIGRAM_INDEX_PICKLE_FILE)
+# reference_words, context_words =  create_dice_keyword_maps(all_categories, word_index,bigram_index)
+# print_test_data_pickle(reference_words,TEST_DATA_REFERENCE_WORDS_DICE)
+# print_test_data_pickle(context_words,TEST_DATA_CONTEXT_WORDS_DICE)
 
