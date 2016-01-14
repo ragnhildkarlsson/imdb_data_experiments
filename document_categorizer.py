@@ -54,7 +54,8 @@ def create_test_data_set(test_folder):
     all_categories = []
     for subdirectory in sub_directories:
         category = subdirectory
-        all_categories.append(category)
+        if not category == 'no_category': 
+            all_categories.append(category)
         category_path = os.path.join(test_folder, subdirectory)
         all_docs = document_processer.get_names_of_files_in_directory(category_path)
         category_doc_map[category]=[]
@@ -123,20 +124,14 @@ def create_dice_keyword_maps(categories, word_index, bigram_index):
     return reference_words, context_words    
 
 def get_ranked_documents(category, tf_idf_map, reference_words, context_words):
-    ranked_documents = []
-    
-    n_ranked_docs = 0
+    ranked_documents = []  
     for document in tf_idf_map:
         referens_simularity = doc_word_simularity.get_cosinus_simularity(tf_idf_map[document],reference_words)
         context_simularity = 0
         if not referens_simularity == 0:
             context_simularity = doc_word_simularity.get_cosinus_simularity(tf_idf_map[document], context_words)
         simularity = context_simularity*referens_simularity
-        ranked_documents.append((document,simularity))
-        if((n_ranked_docs % 100) == 0):
-            print(n_ranked_docs)
-        n_ranked_docs += 1
-
+        ranked_documents.append((document,simularity))  
     ranked_documents = sorted(ranked_documents, key=itemgetter(1), reverse=True)
     return ranked_documents
  
@@ -147,12 +142,13 @@ def categorize(test_categories, tf_idf_map, reference_words, context_words):
         print('calculated ranked documents for: '+ category)
     return ranked_documents
 
-def evaluate_categorization(categorized_documents, correct_categorization,
+def evaluate_categorization(test_categories,
+                            categorized_documents, correct_categorization,
                             category_hierarchy, evaluation_points,
                             precission_key, recall_key, n_ranked_docs_key,
                             n_correct_ranked_docs_key):
     evaluation = {}
-    for category in categorized_documents:
+    for category in test_categories:
         evaluation[category] = {}
         ranked_documents = categorized_documents[category]
         ranked_documents = [doc for doc in ranked_documents if not doc[1] == 0]
@@ -161,18 +157,18 @@ def evaluate_categorization(categorized_documents, correct_categorization,
             for sub_category in category_hierarchy[category]:
                 documents_in_category.update(set(correct_categorization[sub_category]))
 
-        for eval_point in evaluation_scale:
+        for evaluation_point in evaluation_scale:
             n_non_zero_ranked_docs = len(ranked_documents)
             
             # handle the case of no ranked docs
             if( n_non_zero_ranked_docs==0):
-                evaluation[category][eval_point][recall_key] = 0
-                evaluation[category][eval_point][precission_key] = 0
-                evaluation[category][eval_point][n_ranked_docs_key] = 0
+                evaluation[category][evaluation_point][recall_key] = 0
+                evaluation[category][evaluation_point][precission_key] = 0
+                evaluation[category][evaluation_point][n_ranked_docs_key] = 0
                 continue  
 
-            # create a selection for the evalution point
-            n_docs_in_selection = math.ceil(eval_point * n_non_zero_ranked_docs)
+            # create a selection for the evaluation point
+            n_docs_in_selection = math.ceil(evaluation_point * n_non_zero_ranked_docs)
             selected_ranked_documents = ranked_documents[:n_docs_in_selection]
 
             # evaluate precission and recall in selection
@@ -181,10 +177,10 @@ def evaluate_categorization(categorized_documents, correct_categorization,
             for doc in selected_ranked_documents:
                 if doc in documents_in_category:
                     n_correct_ranked_docs +=1
-            evaluation[category][eval_point][precission_key] = (n_correct_ranked_docs/n_docs_in_selection)
-            evaluation[category][eval_point][recall_key] = (n_correct_ranked_docs/n_docs_in_category)
-            evaluation[category][eval_point][n_correct_categorized_docs_key] = n_correct_ranked_docs
-            evaluation[category][eval_point][n_ranked_docs_key] = n_docs_in_selection
+            evaluation[category][evaluation_point][precission_key] = (n_correct_ranked_docs/n_docs_in_selection)
+            evaluation[category][evaluation_point][recall_key] = (n_correct_ranked_docs/n_docs_in_category)
+            evaluation[category][evaluation_point][n_correct_categorized_docs_key] = n_correct_ranked_docs
+            evaluation[category][evaluation_point][n_ranked_docs_key] = n_docs_in_selection
 
         print('Evaluated category: '+category)
     return evaluation
@@ -197,28 +193,57 @@ def create_dice_based_categorization(test_categories,tf_idf_map, reference_words
         reference_words[category] = set([reference[0] for reference in reference_words_map[category]])
         context_words[category] = set([context_word[0] for context_word in context_words_map[category]])
     categorized_documents = categorize(test_categories,tf_idf_map,reference_words, context_words)
-    pprint(categorized_documents)
+    pprint.pprint(categorized_documents)
     print_test_data_pickle(categorized_documents, pickle_file)
 
-def get_summuerized_f1_scores(evaluation,  correct_categorization,
-                             evalutation_point, n_correct_categorized_docs_key):
+def get_summerized_precission(evaluation, evalutation_point,
+                              n_correct_categorized_docs_key,n_ranked_docs_key):
+    sum_correct_ranked_docs = sum([evaluation[category][evaluation_point][n_correct_categorized_docs_key] for category in evaluation])
+    sum_ranked_docs = sum([evaluation[category][evaluation_point][n_ranked_docs_key] for category in evaluation])
+    precission = sum_correct_ranked_docs/sum_ranked_docs
+    return precission
+
+def get_summerized_recall(evaluation,  correct_categorization,
+                          evalutation_point, n_correct_categorized_docs_key):
+    sum_correct_ranked_docs = sum([evaluation[category][evaluation_point][n_correct_categorized_docs_key] for category in evaluation])
     n_categorized_docs = sum([len(correct_categorization[category]) for category in correct_categorization if category in evaluation])
-    sum_correct_ranked_docs = sum([evaluation[category][eval_point][n_correct_categorized_docs_key] for category in evalution])
-    sum_ranked_docs = sum([evaluation[category][eval_point][n_correct_categorized_docs_key] for category in evalution])
-#     # precission = 
-#     # # , recall,
+    recall = sum_correct_ranked_docs / n_categorized_docs
+    return recall
 
-            
-# tf_idf_map = load_test_data_pickle(TEST_DATA_TF_IDF_MAP_PICKLE)
-# categorized_docs = load_test_data_pickle(TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
+        
+def test_basic_setup(test_categories, categorized_documents, correct_categorization,
+                     category_hierarchy, evaluation_points,
+                     precission_key, recall_key, n_ranked_docs_key,
+                     n_correct_ranked_docs_key):
+    
+    evaluation = evaluate_categorization(test_categories,
+                                         categorized_documents, correct_categorization,
+                                         category_hierarchy, evaluation_points,
+                                         precission_key, recall_key, n_ranked_docs_key,
+                                         n_correct_ranked_docs_key):
 
-# CREATE EVAL SCALE list(np.arange(0,1,0.5)) append 1.0
-reference_words_map = load_test_data_pickle(TEST_DATA_REFERENCE_WORDS_DICE)
-context_words_map = load_test_data_pickle(TEST_DATA_CONTEXT_WORDS_DICE)
-test_categories = [category for category in reference_words_map if len(reference_words_map[category])<15 and '_' not in category]
-tf_idf_map = load_test_data_pickle(TEST_DATA_TF_IDF_MAP_PICKLE)
+    pprint.pprint(evaluation)
+    precissions = {}
+    recalls = {}
 
-create_dice_based_categorization(test_categories,tf_idf_map,reference_words_map,context_words_map,RESULT_DICE_BASED_RANKING)
+    for evaluation_point in evaluation_points:
+        precissions[evaluation_point] = get_summerized_precission(evaluation, evalutation_point, n_correct_categorized_docs_key,n_ranked_docs_key)
+        recalls[evaluation_point] = get_summerized_precission(evaluation, evalutation_point, n_correct_categorized_docs_key,n_ranked_docs_key)
+
+    pprint.pprint(precissions)
+    pprint.pprint(recalls)
+    return evaluation, precissions, recalls
+
+test_categories = ["baseball"]
+categorized_docs = load_test_data_pickle(RESULT_DICE_BASED_RANKING )
+correct_categorization = load_test_data_pickle(TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
+category_hierarchy = TEST_DATA_CATEGORY_HIEARACHY
+evaluation_points = list(np.arange(0,1,EVAL_SCALE)) append 1.0
+precission_key = PRECISSION_KEY
+recall_key = RECALL_KEY
+n_ranked_docs_key = N_RANKED_DOCS_KEY
+n_correct_ranked_docs = N_CORRECT_RANKED_DOCS
+test_basic_setup(test_categories,categorized_documents,correct_categorization category_hierarchy,evaluation_points,precission_key,recall_key,n_ranked_docs_key,n_correct_ranked_docs)
 
 # categorized_documents = load_test_data_pickle(RESULT_DICE_BASED_RANKING)
 
@@ -235,15 +260,7 @@ create_dice_based_categorization(test_categories,tf_idf_map,reference_words_map,
 
 
 
-# category = "airplane"
-# category_posting_list = word_index[category]
-# reference_words, context_words = word_simularities.get_dice_based_key_words(word_index, bigram_index, TRAIN_DATA_FOLDER, category_posting_list, DICE_WEIGHT_FILTER_LIMIT, DICE_WORD_FREQUENCY_LIMIT, NUMBER_OF_DOCUMENTS)
-# print(reference_words)
-# print(context_words)
-# reference_words = set([reference[0] for reference in reference_words])
-# context_words = set([context_word[0] for context_word in context_words])
-# ranked_docs = get_ranked_documents(category, tf_idf_map, NUMBER_OF_DOCUMENTS, reference_words,context_words)
-# print(ranked_docs)
+
 
 
 
@@ -269,3 +286,11 @@ create_dice_based_categorization(test_categories,tf_idf_map,reference_words_map,
 # print_test_data_pickle(reference_words,TEST_DATA_REFERENCE_WORDS_DICE)
 # print_test_data_pickle(context_words,TEST_DATA_CONTEXT_WORDS_DICE)
 
+# reference_words_map = load_test_data_pickle(TEST_DATA_REFERENCE_WORDS_DICE)
+# context_words_map = load_test_data_pickle(TEST_DATA_CONTEXT_WORDS_DICE)
+# test_categories = [category for category in reference_words_map if len(reference_words_map[category])<15 and '_' not in category]
+# test_categories = load_test_data_pickle(TEST_DATA_ALL_CATEGORIES_PICKLE)
+
+# tf_idf_map = load_test_data_pickle(TEST_DATA_TF_IDF_MAP_PICKLE)
+
+# create_dice_based_categorization(test_categories,tf_idf_map,reference_words_map,context_words_map,RESULT_DICE_BASED_RANKING)
