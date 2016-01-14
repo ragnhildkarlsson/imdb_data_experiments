@@ -18,6 +18,7 @@ TEST_DATA_TF_IDF_MAP_PICKLE = "data/test_data_pickles/tf_idf_map_pickle"
 TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE = "data/test_data_pickles/categorized_documents_pickle"
 TEST_DATA_REFERENCE_WORDS_DICE = "data/test_data_pickles/test_reference_words_dice"
 TEST_DATA_CONTEXT_WORDS_DICE = "data/test_data_pickles/test_context_words_dice"
+TEST_CATEGORIES = "data/test_data/test_categories"
 
 TRAIN_DATA_FOLDER = "data/train_data"
 WORD_INDEX_PICKLE_FILE = "data/index_word_pickle_file"
@@ -202,11 +203,9 @@ def get_summuerized_f1_scores(evaluation,  correct_categorization,
 
 reference_words_map = load_test_data_pickle(TEST_DATA_REFERENCE_WORDS_DICE)
 context_words_map = load_test_data_pickle(TEST_DATA_CONTEXT_WORDS_DICE)
-for category in reference_words_map:
-    reference_words_map[category] = [reference_tuple for reference_tuple in reference_words_map[category] if type(reference_tuple) is tuple]
-pprint.pprint(reference_words_map)
-# print(context_words_map)
 
+test_categories = [category for category in reference_words_map if len(reference_words_map[category])<15 and '_' not in category]
+pprint.pprint test_categories
 
 
 # category = "airplane"
