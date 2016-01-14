@@ -27,6 +27,12 @@ BIGRAM_INDEX_PICKLE_FILE = "data/index_bigram_pickle_file"
 NUMBER_OF_DOCUMENTS = 220000
 DICE_WEIGHT_FILTER_LIMIT = 0.05
 DICE_WORD_FREQUENCY_LIMIT = 0.04
+EVAL_SCALE = 0.2
+
+PRECISSION_KEY = "rrecission"
+RECALL_KEY = "recall"
+N_RANKED_DOCS_KEY ="n_ranked_docs"
+N_CORRECT_RANKED_DOCS = "n_correct_ranked_docs"
 
 TEST_DATA_CATEGORY_HIEARACHY = {'religion':{'christianity','buddhism','hinduism','islam','judaism'},'christianity':{'christmas'},'sport':{'baseball','basketball','bicyckle','boxing','football','golf','hockey','skiing','soccer','surfing','swimming','tennis','wrestling','horseracing','olympic_games'},\
                                 'water_sport':{'surfing','swimming'}, 'motoring':{'motorcycle','car'}, 'nature':{'animal'},'art':{'cinema','theater','music','opera','classical_music', 'jazz','pop', 'country_music','hip hop', 'dance'}, 'music':{'opera','classical_music','jazz','pop', 'country_music','hip_hop'},\
@@ -136,11 +142,10 @@ def get_ranked_documents(category, tf_idf_map, reference_words, context_words):
  
 def categorize(test_categories, tf_idf_map, reference_words, context_words):
     ranked_documents = {}
-    result = {}
     for category in test_categories:
         ranked_documents[category] = get_ranked_documents(category,tf_idf_map, reference_words[category],context_words[category])
         print('calculated ranked documents for: '+ category)
-    return result
+    return ranked_documents
 
 def evaluate_categorization(categorized_documents, correct_categorization,
                             category_hierarchy, evaluation_points,
@@ -185,32 +190,50 @@ def evaluate_categorization(categorized_documents, correct_categorization,
     return evaluation
 
 
+def create_dice_based_categorization(test_categories,tf_idf_map, reference_words_map,context_words_map,pickle_file):
+    reference_words = {}
+    context_words = {}
+    for category in test_categories:
+        reference_words[category] = set([reference[0] for reference in reference_words_map[category]])
+        context_words[category] = set([context_word[0] for context_word in context_words_map[category]])
+    categorized_documents = categorize(test_categories,tf_idf_map,reference_words, context_words)
+    pprint(categorized_documents)
+    print_test_data_pickle(categorized_documents, pickle_file)
 
-
-# def get_summuerized_f1_scores(evaluation,  correct_categorization,
-#                              evalutation_point, n_correct_categorized_docs_key):
-#     n_categorized_docs = sum([len(correct_categorization[category]) for category in correct_categorization if category in evaluation])
-#     sum_correct_ranked_docs = sum([evaluation[category][eval_point][n_correct_categorized_docs_key] for category in evalution])
-#     sum_ranked_docs = sum([evaluation[category][eval_point][n_correct_categorized_docs_key] for category in evalution])
+def get_summuerized_f1_scores(evaluation,  correct_categorization,
+                             evalutation_point, n_correct_categorized_docs_key):
+    n_categorized_docs = sum([len(correct_categorization[category]) for category in correct_categorization if category in evaluation])
+    sum_correct_ranked_docs = sum([evaluation[category][eval_point][n_correct_categorized_docs_key] for category in evalution])
+    sum_ranked_docs = sum([evaluation[category][eval_point][n_correct_categorized_docs_key] for category in evalution])
 #     # precission = 
 #     # # , recall,
 
             
-
-# test_categories = categories = {'airplane', 'aliens', 'animals', 'art', 'baseball', 'basketball','bicyckle', 'boxing', 'buddhism', 'bussiness','car','christianity', 'christmas','cinema','classical music'}
 # tf_idf_map = load_test_data_pickle(TEST_DATA_TF_IDF_MAP_PICKLE)
 # categorized_docs = load_test_data_pickle(TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
 
 # CREATE EVAL SCALE list(np.arange(0,1,0.5)) append 1.0
-
 reference_words_map = load_test_data_pickle(TEST_DATA_REFERENCE_WORDS_DICE)
 context_words_map = load_test_data_pickle(TEST_DATA_CONTEXT_WORDS_DICE)
+test_categories = [category for category in reference_words_map if len(reference_words_map[category])<15 and '_' not in category]
 tf_idf_map = load_test_data_pickle(TEST_DATA_TF_IDF_MAP_PICKLE)
 
-test_categories = [category for category in reference_words_map if len(reference_words_map[category])<15 and '_' not in category]
-categorized_documents = categorize(test_categoriest,tf_idf_map,reference_words_map,context_words_map)
-pprint(categorized_documents)
-print_test_data_pickle(categorized_documents, RESULT_DICE_BASED_RANKING)
+create_dice_based_categorization(test_categories,tf_idf_map,reference_words_map,context_words_map,RESULT_DICE_BASED_RANKING)
+
+# categorized_documents = load_test_data_pickle(RESULT_DICE_BASED_RANKING)
+
+# evaluation_points = list(np.arange(0,1,evaluation_scale))
+# evaluation_points.append(1.0)
+
+# correct_categorization = load_test_data_pickle(TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
+
+
+# def evaluate_categorization(categorized_documents, correct_categorization,
+#                             category_hierarchy, evaluation_points,
+#                             precission_key, recall_key, n_ranked_docs_key,
+#                             n_correct_ranked_docs_key):
+
+
 
 # category = "airplane"
 # category_posting_list = word_index[category]
