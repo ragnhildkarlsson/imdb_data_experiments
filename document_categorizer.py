@@ -4,7 +4,7 @@ import numpy as np
 import os
 from operator import itemgetter
 import pickle
-
+import pprint
 
 import index
 import document_processer
@@ -105,14 +105,14 @@ def create_dice_keyword_maps(categories, word_index, bigram_index):
                 category_posting_list = word_index[category]
                 r,c = word_simularities.get_dice_based_key_words(word_index, bigram_index, TRAIN_DATA_FOLDER, category_posting_list, DICE_WEIGHT_FILTER_LIMIT, DICE_WORD_FREQUENCY_LIMIT, NUMBER_OF_DOCUMENTS)
         
-        if not category in r:
+        category_in_reference_list = [reference_word for reference_word in r if r[0] == category]
+        if not category_in_reference_list:
             r.append((category,1.0))
         print(r)
         print(c)
         reference_words[category] = r
         context_words[category] = c
     return reference_words, context_words    
-
 
 def get_ranked_documents(category, tf_idf_map, n_docs, reference_words, context_words):
     ranked_documents = []
@@ -142,7 +142,7 @@ def categorize(test_categories, tf_idf_map, reference_words, context_words, n_do
 
 def evaluate_categorization(categorized_documents, correct_categorization,
                             category_hierarchy, evaluation_points,
-                            precission_key, recall_key, n_ranked_docs_key
+                            precission_key, recall_key, n_ranked_docs_key,
                             n_correct_ranked_docs_key):
     evaluation = {}
     for category in categorized_documents:
@@ -151,7 +151,7 @@ def evaluate_categorization(categorized_documents, correct_categorization,
         ranked_documents = [doc for doc in ranked_documents if not doc[1] == 0]
         documents_in_category = set(correct_categorization[category])
         if category in category_hierarchy:
-            for sub_category in category_hierarchy[category]
+            for sub_category in category_hierarchy[category]:
                 documents_in_category.update(set(correct_categorization[sub_category]))
 
         for eval_point in evaluation_scale:
@@ -182,13 +182,15 @@ def evaluate_categorization(categorized_documents, correct_categorization,
         print('Evaluated category: '+category)
     return evaluation
 
+
+
 def get_summuerized_f1_scores(evaluation,  correct_categorization,
                              evalutation_point, n_correct_categorized_docs_key):
     n_categorized_docs = sum([len(correct_categorization[category]) for category in correct_categorization if category in evaluation])
     sum_correct_ranked_docs = sum([evaluation[category][eval_point][n_correct_categorized_docs_key] for category in evalution])
     sum_ranked_docs = sum([evaluation[category][eval_point][n_correct_categorized_docs_key] for category in evalution])
     # precission = 
-    # , recall,
+    # # , recall,
 
             
 
@@ -200,8 +202,10 @@ def get_summuerized_f1_scores(evaluation,  correct_categorization,
 
 reference_words_map = load_test_data_pickle(TEST_DATA_REFERENCE_WORDS_DICE)
 context_words_map = load_test_data_pickle(TEST_DATA_CONTEXT_WORDS_DICE)
-print(reference_words_map)
-print(context_words_map)
+for category in reference_words_map:
+    reference_words_map[category] = [reference_tuple for reference_tuple in reference_words_map[category] if type(reference_tuple) is tuple]
+pprint.pprint(reference_words_map)
+# print(context_words_map)
 
 
 

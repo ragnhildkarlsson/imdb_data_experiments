@@ -30,7 +30,7 @@ def calculate_dice_coefficients_word(category_posting_list, word_index, train_da
                 intersection = index.intersection_search(category_posting_list, word_posting_list)
                 dice_coefficents[word] = len(intersection)/(len(word_posting_list)+len(category_posting_list))
         calculated_posts +=1
-        if(calculated_posts%5 ==0):
+        if(calculated_posts%10 ==0):
             print(calculated_posts)
     return dice_coefficents
 
@@ -49,7 +49,7 @@ def calculate_dice_coefficients_bigram(category_posting_list, bigram_index, trai
                 intersection = index.intersection_search(category_posting_list, bigram_posting_list)
                 dice_coefficents[bigram_string] = len(intersection)/(len(bigram_posting_list)+len(category_posting_list))
         calculated_posts +=1
-        if(calculated_posts%5 ==0):
+        if(calculated_posts%10 ==0):
             print(calculated_posts)
     return dice_coefficents
 
