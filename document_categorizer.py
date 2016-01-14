@@ -19,6 +19,7 @@ TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE = "data/test_data_pickles/categorized_doc
 TEST_DATA_REFERENCE_WORDS_DICE = "data/test_data_pickles/test_reference_words_dice"
 TEST_DATA_CONTEXT_WORDS_DICE = "data/test_data_pickles/test_context_words_dice"
 TEST_CATEGORIES = "data/test_data/test_categories"
+RESULT_DICE_BASED_RANKING = "result/dice_based_ranking"
 
 TRAIN_DATA_FOLDER = "data/train_data"
 WORD_INDEX_PICKLE_FILE = "data/index_word_pickle_file"
@@ -115,7 +116,7 @@ def create_dice_keyword_maps(categories, word_index, bigram_index):
         context_words[category] = c
     return reference_words, context_words    
 
-def get_ranked_documents(category, tf_idf_map, n_docs, reference_words, context_words):
+def get_ranked_documents(category, tf_idf_map, reference_words, context_words):
     ranked_documents = []
     
     n_ranked_docs = 0
@@ -133,11 +134,11 @@ def get_ranked_documents(category, tf_idf_map, n_docs, reference_words, context_
     ranked_documents = sorted(ranked_documents, key=itemgetter(1), reverse=True)
     return ranked_documents
  
-def categorize(test_categories, tf_idf_map, reference_words, context_words, n_docs,):
+def categorize(test_categories, tf_idf_map, reference_words, context_words):
     ranked_documents = {}
     result = {}
     for category in test_categories:
-        ranked_documents[category] = get_ranked_documents(category,tf_idf_map,n_docs,reference_words[category],context_words[category])
+        ranked_documents[category] = get_ranked_documents(category,tf_idf_map, reference_words[category],context_words[category])
         print('calculated ranked documents for: '+ category)
     return result
 
@@ -185,13 +186,14 @@ def evaluate_categorization(categorized_documents, correct_categorization,
 
 
 
-def get_summuerized_f1_scores(evaluation,  correct_categorization,
-                             evalutation_point, n_correct_categorized_docs_key):
-    n_categorized_docs = sum([len(correct_categorization[category]) for category in correct_categorization if category in evaluation])
-    sum_correct_ranked_docs = sum([evaluation[category][eval_point][n_correct_categorized_docs_key] for category in evalution])
-    sum_ranked_docs = sum([evaluation[category][eval_point][n_correct_categorized_docs_key] for category in evalution])
-    # precission = 
-    # # , recall,
+
+# def get_summuerized_f1_scores(evaluation,  correct_categorization,
+#                              evalutation_point, n_correct_categorized_docs_key):
+#     n_categorized_docs = sum([len(correct_categorization[category]) for category in correct_categorization if category in evaluation])
+#     sum_correct_ranked_docs = sum([evaluation[category][eval_point][n_correct_categorized_docs_key] for category in evalution])
+#     sum_ranked_docs = sum([evaluation[category][eval_point][n_correct_categorized_docs_key] for category in evalution])
+#     # precission = 
+#     # # , recall,
 
             
 
@@ -203,10 +205,12 @@ def get_summuerized_f1_scores(evaluation,  correct_categorization,
 
 reference_words_map = load_test_data_pickle(TEST_DATA_REFERENCE_WORDS_DICE)
 context_words_map = load_test_data_pickle(TEST_DATA_CONTEXT_WORDS_DICE)
+tf_idf_map = load_test_data_pickle(TEST_DATA_TF_IDF_MAP_PICKLE)
 
 test_categories = [category for category in reference_words_map if len(reference_words_map[category])<15 and '_' not in category]
-pprint.pprint test_categories
-
+categorized_documents = categorize(test_categoriest,tf_idf_map,reference_words_map,context_words_map)
+pprint(categorized_documents)
+print_test_data_pickle(categorized_documents, RESULT_DICE_BASED_RANKING)
 
 # category = "airplane"
 # category_posting_list = word_index[category]

@@ -22,7 +22,7 @@ def get_lines_in_file_by_name(file_name, folder):
     lines = get_lines_in_file_by_path(path)
     return lines
 
-def get_document_string(file_name,folder):
+def get_document_string(file_name, folder):
     path = os.path.join(folder, file_name)
     lines = get_lines_in_file_by_path(path)
     document = ' '.join(lines)
