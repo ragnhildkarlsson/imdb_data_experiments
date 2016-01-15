@@ -157,7 +157,7 @@ def evaluate_categorization(test_categories,
             for sub_category in category_hierarchy[category]:
                 documents_in_category.update(set(correct_categorization[sub_category]))
 
-        for evaluation_point in evaluation_scale:
+        for evaluation_point in evaluation_points: 
             n_non_zero_ranked_docs = len(ranked_documents)
             
             # handle the case of no ranked docs
@@ -166,7 +166,6 @@ def evaluate_categorization(test_categories,
                 evaluation[category][evaluation_point][precission_key] = 0
                 evaluation[category][evaluation_point][n_ranked_docs_key] = 0
                 continue  
-
             # create a selection for the evaluation point
             n_docs_in_selection = math.ceil(evaluation_point * n_non_zero_ranked_docs)
             selected_ranked_documents = ranked_documents[:n_docs_in_selection]
@@ -196,7 +195,7 @@ def create_dice_based_categorization(test_categories,tf_idf_map, reference_words
     pprint.pprint(categorized_documents)
     print_test_data_pickle(categorized_documents, pickle_file)
 
-def get_summerized_precission(evaluation, evalutation_point,
+def get_summerized_precission(evaluation, evaluation_point,
                               n_correct_categorized_docs_key,n_ranked_docs_key):
     sum_correct_ranked_docs = sum([evaluation[category][evaluation_point][n_correct_categorized_docs_key] for category in evaluation])
     sum_ranked_docs = sum([evaluation[category][evaluation_point][n_ranked_docs_key] for category in evaluation])
@@ -204,7 +203,7 @@ def get_summerized_precission(evaluation, evalutation_point,
     return precission
 
 def get_summerized_recall(evaluation,  correct_categorization,
-                          evalutation_point, n_correct_categorized_docs_key):
+                          evaluation_point, n_correct_categorized_docs_key):
     sum_correct_ranked_docs = sum([evaluation[category][evaluation_point][n_correct_categorized_docs_key] for category in evaluation])
     n_categorized_docs = sum([len(correct_categorization[category]) for category in correct_categorization if category in evaluation])
     recall = sum_correct_ranked_docs / n_categorized_docs
@@ -227,24 +226,28 @@ def test_basic_setup(test_categories, categorized_documents, correct_categorizat
     recalls = {}
 
     for evaluation_point in evaluation_points:
-        precissions[evaluation_point] = get_summerized_precission(evaluation, evalutation_point, n_correct_categorized_docs_key,n_ranked_docs_key)
-        recalls[evaluation_point] = get_summerized_precission(evaluation, evalutation_point, n_correct_categorized_docs_key,n_ranked_docs_key)
+        precissions[evaluation_point] = get_summerized_precission(evaluation, evaluation_point, n_correct_categorized_docs_key,n_ranked_docs_key)
+        recalls[evaluation_point] = get_summerized_precission(evaluation, evaluation_point, n_correct_categorized_docs_key,n_ranked_docs_key)
 
     pprint.pprint(precissions)
     pprint.pprint(recalls)
     return evaluation, precissions, recalls
 
 test_categories = ["baseball"]
-categorized_docs = load_test_data_pickle(RESULT_DICE_BASED_RANKING )
+categorized_documents = load_test_data_pickle(RESULT_DICE_BASED_RANKING )
 correct_categorization = load_test_data_pickle(TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
 category_hierarchy = TEST_DATA_CATEGORY_HIEARACHY
 evaluation_points = list(np.arange(0,1,EVAL_SCALE))
 evaluation_points.append(1.0)
+evaluation_points.pop(0)
 precission_key = PRECISSION_KEY
 recall_key = RECALL_KEY
 n_ranked_docs_key = N_RANKED_DOCS_KEY
 n_correct_ranked_docs_key = N_CORRECT_RANKED_DOCS_KEY
-e,p,r = test_basic_setup(test_categories,categorized_documents, correct_categorization category_hierarchy,evaluation_points,precission_key,recall_key,n_ranked_docs_key,n_correct_ranked_docs)
+e,p,r = test_basic_setup(test_categories, 
+                         categorized_documents, correct_categorization,
+                         category_hierarchy,evaluation_points,precission_key,
+                         recall_key, n_ranked_docs_key,n_correct_ranked_docs_key)
 
 # categorized_documents = load_test_data_pickle(RESULT_DICE_BASED_RANKING)
 
