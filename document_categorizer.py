@@ -32,7 +32,7 @@ EVAL_SCALE = 0.2
 PRECISSION_KEY = "rrecission"
 RECALL_KEY = "recall"
 N_RANKED_DOCS_KEY ="n_ranked_docs"
-N_CORRECT_RANKED_DOCS = "n_correct_ranked_docs"
+N_CORRECT_RANKED_DOCS_KEY = "n_correct_ranked_docs:key"
 
 TEST_DATA_CATEGORY_HIEARACHY = {'religion':{'christianity','buddhism','hinduism','islam','judaism'},'christianity':{'christmas'},'sport':{'baseball','basketball','bicyckle','boxing','football','golf','hockey','skiing','soccer','surfing','swimming','tennis','wrestling','horseracing','olympic_games'},\
                                 'water_sport':{'surfing','swimming'}, 'motoring':{'motorcycle','car'}, 'nature':{'animal'},'art':{'cinema','theater','music','opera','classical_music', 'jazz','pop', 'country_music','hip hop', 'dance'}, 'music':{'opera','classical_music','jazz','pop', 'country_music','hip_hop'},\
@@ -220,7 +220,7 @@ def test_basic_setup(test_categories, categorized_documents, correct_categorizat
                                          categorized_documents, correct_categorization,
                                          category_hierarchy, evaluation_points,
                                          precission_key, recall_key, n_ranked_docs_key,
-                                         n_correct_ranked_docs_key):
+                                         n_correct_ranked_docs_key)
 
     pprint.pprint(evaluation)
     precissions = {}
@@ -238,12 +238,13 @@ test_categories = ["baseball"]
 categorized_docs = load_test_data_pickle(RESULT_DICE_BASED_RANKING )
 correct_categorization = load_test_data_pickle(TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
 category_hierarchy = TEST_DATA_CATEGORY_HIEARACHY
-evaluation_points = list(np.arange(0,1,EVAL_SCALE)) append 1.0
+evaluation_points = list(np.arange(0,1,EVAL_SCALE))
+evaluation_points.append(1.0)
 precission_key = PRECISSION_KEY
 recall_key = RECALL_KEY
 n_ranked_docs_key = N_RANKED_DOCS_KEY
-n_correct_ranked_docs = N_CORRECT_RANKED_DOCS
-test_basic_setup(test_categories,categorized_documents,correct_categorization category_hierarchy,evaluation_points,precission_key,recall_key,n_ranked_docs_key,n_correct_ranked_docs)
+n_correct_ranked_docs_key = N_CORRECT_RANKED_DOCS_KEY
+e,p,r = test_basic_setup(test_categories,categorized_documents, correct_categorization category_hierarchy,evaluation_points,precission_key,recall_key,n_ranked_docs_key,n_correct_ranked_docs)
 
 # categorized_documents = load_test_data_pickle(RESULT_DICE_BASED_RANKING)
 
