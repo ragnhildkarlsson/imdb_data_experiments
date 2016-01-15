@@ -156,15 +156,15 @@ def evaluate_categorization(test_categories,
         if category in category_hierarchy:
             for sub_category in category_hierarchy[category]:
                 documents_in_category.update(set(correct_categorization[sub_category]))
-
+        evaluation_point_index = 0
         for evaluation_point in evaluation_points: 
             n_non_zero_ranked_docs = len(ranked_documents)
             
             # handle the case of no ranked docs
             if( n_non_zero_ranked_docs==0):
-                evaluation[category][evaluation_point][recall_key] = 0
-                evaluation[category][evaluation_point][precission_key] = 0
-                evaluation[category][evaluation_point][n_ranked_docs_key] = 0
+                evaluation[category][evaluation_point_index][recall_key] = 0
+                evaluation[category][evaluation_point_index][precission_key] = 0
+                evaluation[category][evaluation_point_index][n_ranked_docs_key] = 0
                 continue  
             # create a selection for the evaluation point
             n_docs_in_selection = math.ceil(evaluation_point * n_non_zero_ranked_docs)
@@ -176,10 +176,11 @@ def evaluate_categorization(test_categories,
             for doc in selected_ranked_documents:
                 if doc in documents_in_category:
                     n_correct_ranked_docs +=1
-            evaluation[category][evaluation_point][precission_key] = (n_correct_ranked_docs/n_docs_in_selection)
-            evaluation[category][evaluation_point][recall_key] = (n_correct_ranked_docs/n_docs_in_category)
-            evaluation[category][evaluation_point][n_correct_categorized_docs_key] = n_correct_ranked_docs
-            evaluation[category][evaluation_point][n_ranked_docs_key] = n_docs_in_selection
+            evaluation[category][evaluation_point_index][precission_key] = (n_correct_ranked_docs/n_docs_in_selection)
+            evaluation[category][evaluation_point_index][recall_key] = (n_correct_ranked_docs/n_docs_in_category)
+            evaluation[category][evaluation_point_index][n_correct_categorized_docs_key] = n_correct_ranked_docs
+            evaluation[category][evaluation_point_index][n_ranked_docs_key] = n_docs_in_selection
+            evaluation_point_index +=1
 
         print('Evaluated category: '+category)
     return evaluation
@@ -195,16 +196,16 @@ def create_dice_based_categorization(test_categories,tf_idf_map, reference_words
     pprint.pprint(categorized_documents)
     print_test_data_pickle(categorized_documents, pickle_file)
 
-def get_summerized_precission(evaluation, evaluation_point,
+def get_summerized_precission(evaluation, evaluation_point_index,
                               n_correct_categorized_docs_key,n_ranked_docs_key):
-    sum_correct_ranked_docs = sum([evaluation[category][evaluation_point][n_correct_categorized_docs_key] for category in evaluation])
-    sum_ranked_docs = sum([evaluation[category][evaluation_point][n_ranked_docs_key] for category in evaluation])
+    sum_correct_ranked_docs = sum([evaluation[category][evaluation_point_index][n_correct_categorized_docs_key] for category in evaluation])
+    sum_ranked_docs = sum([evaluation[category][evaluation_point_index][n_ranked_docs_key] for category in evaluation])
     precission = sum_correct_ranked_docs/sum_ranked_docs
     return precission
 
 def get_summerized_recall(evaluation,  correct_categorization,
-                          evaluation_point, n_correct_categorized_docs_key):
-    sum_correct_ranked_docs = sum([evaluation[category][evaluation_point][n_correct_categorized_docs_key] for category in evaluation])
+                          evaluation_point_index, n_correct_categorized_docs_key):
+    sum_correct_ranked_docs = sum([evaluation[category][evaluation_point_index][n_correct_categorized_docs_key] for category in evaluation])
     n_categorized_docs = sum([len(correct_categorization[category]) for category in correct_categorization if category in evaluation])
     recall = sum_correct_ranked_docs / n_categorized_docs
     return recall
@@ -224,11 +225,11 @@ def test_basic_setup(test_categories, categorized_documents, correct_categorizat
     pprint.pprint(evaluation)
     precissions = {}
     recalls = {}
-
-    for evaluation_point in evaluation_points:
-        precissions[evaluation_point] = get_summerized_precission(evaluation, evaluation_point, n_correct_categorized_docs_key,n_ranked_docs_key)
-        recalls[evaluation_point] = get_summerized_precission(evaluation, evaluation_point, n_correct_categorized_docs_key,n_ranked_docs_key)
-
+    for evaluation_point_index in xrange(len(evaluation_points)):
+        precissions[evaluation_point_index] = get_summerized_precission(evaluation, evaluation_point_index, n_correct_categorized_docs_key,n_ranked_docs_key)
+        recalls[evaluation_point_index] = get_summerized_precission(evaluation, evaluation_point_index, n_correct_categorized_docs_key,n_ranked_docs_key)
+        evaluation_point_index +=1
+    
     pprint.pprint(precissions)
     pprint.pprint(recalls)
     return evaluation, precissions, recalls
