@@ -244,24 +244,24 @@ def test_basic_setup(test_categories, categorized_documents, correct_categorizat
 
 
 #EVALUATION
-# test_categories = ["baseball"]
-# test_categories = [category for category in reference_words_map if len(reference_words_map[category])<15 and '_' not in category]
-# test_categories = [category for category in reference_words_map if len(reference_words_map[category])<15 and '_' not in category]
+
+reference_words_map = load_test_data_pickle(TEST_DATA_REFERENCE_WORDS_DICE)
+test_categories = [category for category in reference_words_map if len(reference_words_map[category])<15 and '_' not in category]
 # test_categories = load_test_data_pickle(TEST_DATA_ALL_CATEGORIES_PICKLE)
-# correct_categorization = load_test_data_pickle(TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
-# categorized_documents = load_test_data_pickle(RESULT_DICE_BASED_RANKING )
-# category_hierarchy = TEST_DATA_CATEGORY_HIEARACHY
-# evaluation_points = list(np.arange(0,1,EVAL_SCALE))
-# evaluation_points.append(1.0)
-# evaluation_points.pop(0)
-# precission_key = PRECISSION_KEY
-# recall_key = RECALL_KEY
-# n_ranked_docs_key = N_RANKED_DOCS_KEY
-# n_correct_ranked_docs_key = N_CORRECT_RANKED_DOCS_KEY
-# e,p,r = test_basic_setup(test_categories, 
-#                          categorized_documents, correct_categorization,
-#                          category_hierarchy,evaluation_points,precission_key,
-#                          recall_key, n_ranked_docs_key,n_correct_ranked_docs_key)
+correct_categorization = load_test_data_pickle(TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
+categorized_documents = load_test_data_pickle(RESULT_DICE_BASED_RANKING )
+category_hierarchy = TEST_DATA_CATEGORY_HIEARACHY
+evaluation_points = list(np.arange(0,1,EVAL_SCALE))
+evaluation_points.append(1.0)
+evaluation_points.pop(0)
+precission_key = PRECISSION_KEY
+recall_key = RECALL_KEY
+n_ranked_docs_key = N_RANKED_DOCS_KEY
+n_correct_ranked_docs_key = N_CORRECT_RANKED_DOCS_KEY
+e,p,r = test_basic_setup(test_categories, 
+                         categorized_documents, correct_categorization,
+                         category_hierarchy,evaluation_points,precission_key,
+                         recall_key, n_ranked_docs_key,n_correct_ranked_docs_key)
 
 # categorized_documents = load_test_data_pickle(RESULT_DICE_BASED_RANKING)
 
@@ -311,22 +311,5 @@ def test_basic_setup(test_categories, categorized_documents, correct_categorizat
 
 # tf_idf_map = load_test_data_pickle(TEST_DATA_TF_IDF_MAP_PICKLE)
 
-# create_dice_based_categorization(test_categories,tf_idf_map,reference_words_map,context_words_map,RESULT_DICE_BASED_RANKING)
 
 
-# TEMPORARY
-reference_words_map = load_test_data_pickle(TEST_DATA_REFERENCE_WORDS_DICE)
-context_words_map = load_test_data_pickle(TEST_DATA_CONTEXT_WORDS_DICE)
-word_index = index.get_index(WORD_INDEX_PICKLE_FILE)
-bigram_index = index.get_index(BIGRAM_INDEX_PICKLE_FILE)
-
-category = "rock"
-category_posting_list = word_index[category]
-r,c = word_simularities.get_dice_based_key_words(word_index, bigram_index, TRAIN_DATA_FOLDER, category_posting_list, DICE_WEIGHT_FILTER_LIMIT, DICE_WORD_FREQUENCY_LIMIT, NUMBER_OF_DOCUMENTS)
-category_in_reference_list = [reference_word for reference_word in r if r[0] == category]
-if not category_in_reference_list:
-    r.append((category,1.0))
-reference_words_map[category] = r
-context_words_map[category] = c
-print_test_data_pickle(reference_words_map, TEST_DATA_REFERENCE_WORDS_DICE)
-print_test_data_pickle(context_words_map, TEST_DATA_CONTEXT_WORDS_DICE)
