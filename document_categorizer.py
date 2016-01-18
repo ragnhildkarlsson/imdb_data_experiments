@@ -211,7 +211,7 @@ def get_summerized_precission(evaluation, evaluation_point_index,
 def get_summerized_recall(evaluation,  correct_categorization,
                           evaluation_point_index, n_correct_categorized_docs_key):
     sum_correct_ranked_docs = sum([evaluation[category][evaluation_point_index][n_correct_categorized_docs_key] for category in evaluation])
-    n_categorized_docs = sum([len(correct_categorization[category]) for category in correct_categorization if category in evaluation])
+    n_categorized_docs = sum([len( correct_categorization[category]) for category in correct_categorization if category in evaluation])
     recall = sum_correct_ranked_docs / n_categorized_docs
     return recall
 
@@ -232,16 +232,19 @@ def test_basic_setup(test_categories, categorized_documents, correct_categorizat
     recalls = {}
     for evaluation_point_index in range(len(evaluation_points)):
         precissions[evaluation_point_index] = get_summerized_precission(evaluation, evaluation_point_index, n_correct_ranked_docs_key,n_ranked_docs_key)
-        recalls[evaluation_point_index] = get_summerized_precission(evaluation, evaluation_point_index, n_correct_ranked_docs_key)
+        recalls[evaluation_point_index] = get_summerized_recall(evaluation, correct_categorization, evaluation_point_index, n_correct_ranked_docs_key)
         evaluation_point_index +=1
     
     pprint.pprint(precissions)
     pprint.pprint(recalls)
     return evaluation, precissions, recalls
 
-test_categories = ["baseball"]
+# test_categories = ["baseball"]
+# test_categories = [category for category in reference_words_map if len(reference_words_map[category])<15 and '_' not in category]
+# test_categories = [category for category in reference_words_map if len(reference_words_map[category])<15 and '_' not in category]
+test_categories = load_test_data_pickle(TEST_DATA_ALL_CATEGORIES_PICKLE)
+create_dice_based_categorization(test_categories,tf_idf_map,reference_words_map,context_words_map,RESULT_DICE_BASED_RANKING)
 categorized_documents = load_test_data_pickle(RESULT_DICE_BASED_RANKING )
-correct_categorization = load_test_data_pickle(TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
 category_hierarchy = TEST_DATA_CATEGORY_HIEARACHY
 evaluation_points = list(np.arange(0,1,EVAL_SCALE))
 evaluation_points.append(1.0)
