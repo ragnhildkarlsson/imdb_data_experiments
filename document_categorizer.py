@@ -34,9 +34,9 @@ RECALL_KEY = "recall"
 N_RANKED_DOCS_KEY ="n_ranked_docs"
 N_CORRECT_RANKED_DOCS_KEY = "n_correct_ranked_docs:key"
 
-TEST_DATA_CATEGORY_HIEARACHY = {'religion':{'christianity','buddhism','hinduism','islam','judaism'},'christianity':{'christmas'},'sport':{'baseball','basketball','bicyckle','boxing','football','golf','hockey','skiing','soccer','surfing','swimming','tennis','wrestling','horseracing','olympic_games'},\
-                                'water_sport':{'surfing','swimming'}, 'motoring':{'motorcycle','car'}, 'nature':{'animal'},'art':{'cinema','theater','music','opera','classical_music', 'jazz','pop', 'country_music','hip hop', 'dance'}, 'music':{'opera','classical_music','jazz','pop', 'country_music','hip_hop'},\
-                                'science':{'medicine','technology','pyscology'},'medicine':{'disability'}, 'education':{'school','collage'}, 'crime':{'prision','mafia','drugs','fraud','gambling','terroism'}}
+TEST_DATA_CATEGORY_HIEARACHY = {'religion':{'christianity','buddhism','hinduism','islam','judaism'},'christianity':{'christmas'},'sport':{'baseball','basketball','bicycle','boxing','football','golf','hockey','skiing','soccer','surfing','swimming','tennis','wrestling','horseracing','olympic_games'},\
+                                'water_sport':{'surfing','swimming'}, 'motoring':{'motorcycle','car'}, 'nature':{'animals'},'art':{'cinema','theater','music','opera','classical_music', 'jazz','pop', 'country_music','hip_hop', 'dance'}, 'music':{'opera','classical_music','jazz','pop', 'country_music','hip_hop'},\
+                                'science':{'medicine','technology','psychology'},'medicine':{'disability'}, 'education':{'school','college'}, 'crime':{'prison','mafia','drugs','fraud','gambling','terrorism'}}
 
 def load_test_data_pickle(file_path):
     resourse = pickle.load( open(file_path, "rb" ) )
@@ -160,18 +160,19 @@ def evaluate_categorization(test_categories,
         evaluation_point_index = 0
         for evaluation_point in evaluation_points: 
             evaluation[category][evaluation_point_index] = {}
-            min_score = ranked_documents[-1][1]
-            max_score = ranked_documents[0][1]
-            score_range = max_score-min_score
-
             n_non_zero_ranked_docs = len(ranked_documents)
             # handle the case of no ranked  docs
             if( n_non_zero_ranked_docs==0):
                 evaluation[category][evaluation_point_index][recall_key] = 0
                 evaluation[category][evaluation_point_index][precission_key] = 0
                 evaluation[category][evaluation_point_index][n_ranked_docs_key] = 0
+                evaluation[category][evaluation_point_index][n_correct_ranked_docs_key] = 0
+                evaluation_point_index +=1
                 continue  
             # create a selection for the evaluation point
+            min_score = ranked_documents[-1][1]
+            max_score = ranked_documents[0][1]
+            score_range = max_score-min_score
             min_score_in_selection = min_score + ((1-evaluation_point)*score_range)
             selected_ranked_documents = [ranked_doc for ranked_doc in ranked_documents if ranked_doc[1] >= min_score_in_selection]
             n_docs_in_selection =  len(selected_ranked_documents)
@@ -189,7 +190,6 @@ def evaluate_categorization(test_categories,
             evaluation[category][evaluation_point_index][n_correct_ranked_docs_key] = n_correct_ranked_docs
             evaluation[category][evaluation_point_index][n_ranked_docs_key] = n_docs_in_selection
             evaluation_point_index +=1
-
         print('Evaluated category: '+category)
     return evaluation
 
@@ -204,16 +204,16 @@ def create_dice_based_categorization(test_categories,tf_idf_map, reference_words
     pprint.pprint(categorized_documents)
     print_test_data_pickle(categorized_documents, pickle_file)
 
-def get_summerized_precission(evaluation, evaluation_point_index,
-                              n_correct_categorized_docs_key,n_ranked_docs_key):
-    sum_correct_ranked_docs = sum([evaluation[category][evaluation_point_index][n_correct_categorized_docs_key] for category in evaluation])
+def get_summerized_precission(evaluation, evaluation_point_index, n_ranked_docs_key
+                              n_correct_ranked_docs_key):
+    sum_correct_ranked_docs = sum([evaluation[category][evaluation_point_index][n_correct_ranked_docs_key] for category in evaluation])
     sum_ranked_docs = sum([evaluation[category][evaluation_point_index][n_ranked_docs_key] for category in evaluation])
     precission = sum_correct_ranked_docs/sum_ranked_docs
     return precission
 
 def get_summerized_recall(evaluation,  correct_categorization,
-                          evaluation_point_index, n_correct_categorized_docs_key):
-    sum_correct_ranked_docs = sum([evaluation[category][evaluation_point_index][n_correct_categorized_docs_key] for category in evaluation])
+                          evaluation_point_index, n_correct_ranked_docs_key):
+    sum_correct_ranked_docs = sum([evaluation[category][evaluation_point_index][n_correct_ranked_docs_key] for category in evaluation])
     n_categorized_docs = sum([len( correct_categorization[category]) for category in correct_categorization if category in evaluation])
     recall = sum_correct_ranked_docs / n_categorized_docs
     return recall
@@ -234,7 +234,7 @@ def test_basic_setup(test_categories, categorized_documents, correct_categorizat
     precissions = {}
     recalls = {}
     for evaluation_point_index in range(len(evaluation_points)):
-        precissions[evaluation_point_index] = get_summerized_precission(evaluation, evaluation_point_index, n_correct_ranked_docs_key,n_ranked_docs_key)
+        precissions[evaluation_point_index] = get_summerized_precission(evaluation, evaluation_point_index, n_ranked_docs_key, n_correct_ranked_docs_key,)
         recalls[evaluation_point_index] = get_summerized_recall(evaluation, correct_categorization, evaluation_point_index, n_correct_ranked_docs_key)
         evaluation_point_index +=1
     
