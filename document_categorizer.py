@@ -247,21 +247,21 @@ def test_basic_setup(test_categories, categorized_documents, correct_categorizat
 # test_categories = ["baseball"]
 # test_categories = [category for category in reference_words_map if len(reference_words_map[category])<15 and '_' not in category]
 # test_categories = [category for category in reference_words_map if len(reference_words_map[category])<15 and '_' not in category]
-test_categories = load_test_data_pickle(TEST_DATA_ALL_CATEGORIES_PICKLE)
-correct_categorization = load_test_data_pickle(TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
-categorized_documents = load_test_data_pickle(RESULT_DICE_BASED_RANKING )
-category_hierarchy = TEST_DATA_CATEGORY_HIEARACHY
-evaluation_points = list(np.arange(0,1,EVAL_SCALE))
-evaluation_points.append(1.0)
-evaluation_points.pop(0)
-precission_key = PRECISSION_KEY
-recall_key = RECALL_KEY
-n_ranked_docs_key = N_RANKED_DOCS_KEY
-n_correct_ranked_docs_key = N_CORRECT_RANKED_DOCS_KEY
-e,p,r = test_basic_setup(test_categories, 
-                         categorized_documents, correct_categorization,
-                         category_hierarchy,evaluation_points,precission_key,
-                         recall_key, n_ranked_docs_key,n_correct_ranked_docs_key)
+# test_categories = load_test_data_pickle(TEST_DATA_ALL_CATEGORIES_PICKLE)
+# correct_categorization = load_test_data_pickle(TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
+# categorized_documents = load_test_data_pickle(RESULT_DICE_BASED_RANKING )
+# category_hierarchy = TEST_DATA_CATEGORY_HIEARACHY
+# evaluation_points = list(np.arange(0,1,EVAL_SCALE))
+# evaluation_points.append(1.0)
+# evaluation_points.pop(0)
+# precission_key = PRECISSION_KEY
+# recall_key = RECALL_KEY
+# n_ranked_docs_key = N_RANKED_DOCS_KEY
+# n_correct_ranked_docs_key = N_CORRECT_RANKED_DOCS_KEY
+# e,p,r = test_basic_setup(test_categories, 
+#                          categorized_documents, correct_categorization,
+#                          category_hierarchy,evaluation_points,precission_key,
+#                          recall_key, n_ranked_docs_key,n_correct_ranked_docs_key)
 
 # categorized_documents = load_test_data_pickle(RESULT_DICE_BASED_RANKING)
 
