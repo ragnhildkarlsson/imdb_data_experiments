@@ -156,20 +156,25 @@ def evaluate_categorization(test_categories,
         if category in category_hierarchy:
             for sub_category in category_hierarchy[category]:
                 documents_in_category.update(set(correct_categorization[sub_category]))
+        
         evaluation_point_index = 0
         for evaluation_point in evaluation_points: 
+            evaluation[category][evaluation_point_index] = {}
+            min_score = ranked_documents[-1][1]
+            max_score = ranked_documents[0][1]
+            score_range = max_score-min_score
+
             n_non_zero_ranked_docs = len(ranked_documents)
-            
-            # handle the case of no ranked docs
+            # handle the case of no ranked  docs
             if( n_non_zero_ranked_docs==0):
                 evaluation[category][evaluation_point_index][recall_key] = 0
                 evaluation[category][evaluation_point_index][precission_key] = 0
                 evaluation[category][evaluation_point_index][n_ranked_docs_key] = 0
                 continue  
             # create a selection for the evaluation point
-            n_docs_in_selection = math.ceil(evaluation_point * n_non_zero_ranked_docs)
-            selected_ranked_documents = ranked_documents[:n_docs_in_selection]
-
+            min_score_in_selection = min_score + ((1-evaluation_point)*score_range)
+            selected_ranked_documents = [ranked_doc for ranked_doc in ranked_documents in ranked_doc[1] >= min_score_in_selection]
+            n_docs_in_selection =  len(selected_ranked_documents)
             # evaluate precission and recall in selection
             n_docs_in_category = len(documents_in_category)
             n_correct_ranked_docs =0
@@ -245,10 +250,16 @@ precission_key = PRECISSION_KEY
 recall_key = RECALL_KEY
 n_ranked_docs_key = N_RANKED_DOCS_KEY
 n_correct_ranked_docs_key = N_CORRECT_RANKED_DOCS_KEY
-e,p,r = test_basic_setup(test_categories, 
-                         categorized_documents, correct_categorization,
-                         category_hierarchy,evaluation_points,precission_key,
-                         recall_key, n_ranked_docs_key,n_correct_ranked_docs_key)
+evaluation = evaluate_categorization(test_categories,
+                                         categorized_documents, correct_categorization,
+                                         category_hierarchy, evaluation_points,
+                                         precission_key, recall_key, n_ranked_docs_key,
+                                         n_correct_ranked_docs_key)
+pprint.pprint(evaluation)
+# e,p,r = test_basic_setup(test_categories, 
+#                          categorized_documents, correct_categorization,
+#                          category_hierarchy,evaluation_points,precission_key,
+#                          recall_key, n_ranked_docs_key,n_correct_ranked_docs_key)
 
 # categorized_documents = load_test_data_pickle(RESULT_DICE_BASED_RANKING)
 
