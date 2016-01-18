@@ -177,6 +177,9 @@ def evaluate_categorization(test_categories,
             n_docs_in_selection =  len(selected_ranked_documents)
             # evaluate precission and recall in selection
             n_docs_in_category = len(documents_in_category)
+            if n_docs_in_category == 0:
+                print(category)
+                raise
             n_correct_ranked_docs =0
             for doc in selected_ranked_documents:
                 if doc[0] in documents_in_category:
@@ -243,7 +246,7 @@ def test_basic_setup(test_categories, categorized_documents, correct_categorizat
 # test_categories = [category for category in reference_words_map if len(reference_words_map[category])<15 and '_' not in category]
 # test_categories = [category for category in reference_words_map if len(reference_words_map[category])<15 and '_' not in category]
 test_categories = load_test_data_pickle(TEST_DATA_ALL_CATEGORIES_PICKLE)
-create_dice_based_categorization(test_categories,tf_idf_map,reference_words_map,context_words_map,RESULT_DICE_BASED_RANKING)
+correct_categorization = load_test_data_pickle(TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
 categorized_documents = load_test_data_pickle(RESULT_DICE_BASED_RANKING )
 category_hierarchy = TEST_DATA_CATEGORY_HIEARACHY
 evaluation_points = list(np.arange(0,1,EVAL_SCALE))
