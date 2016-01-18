@@ -204,7 +204,7 @@ def create_dice_based_categorization(test_categories,tf_idf_map, reference_words
     pprint.pprint(categorized_documents)
     print_test_data_pickle(categorized_documents, pickle_file)
 
-def get_summerized_precission(evaluation, evaluation_point_index, n_ranked_docs_key
+def get_summerized_precission(evaluation, evaluation_point_index, n_ranked_docs_key,
                               n_correct_ranked_docs_key):
     sum_correct_ranked_docs = sum([evaluation[category][evaluation_point_index][n_correct_ranked_docs_key] for category in evaluation])
     sum_ranked_docs = sum([evaluation[category][evaluation_point_index][n_ranked_docs_key] for category in evaluation])
@@ -242,6 +242,8 @@ def test_basic_setup(test_categories, categorized_documents, correct_categorizat
     pprint.pprint(recalls)
     return evaluation, precissions, recalls
 
+
+#EVALUATION
 # test_categories = ["baseball"]
 # test_categories = [category for category in reference_words_map if len(reference_words_map[category])<15 and '_' not in category]
 # test_categories = [category for category in reference_words_map if len(reference_words_map[category])<15 and '_' not in category]
@@ -310,3 +312,21 @@ e,p,r = test_basic_setup(test_categories,
 # tf_idf_map = load_test_data_pickle(TEST_DATA_TF_IDF_MAP_PICKLE)
 
 # create_dice_based_categorization(test_categories,tf_idf_map,reference_words_map,context_words_map,RESULT_DICE_BASED_RANKING)
+
+
+# TEMPORARY
+reference_words_map = load_test_data_pickle(TEST_DATA_REFERENCE_WORDS_DICE)
+context_words_map = load_test_data_pickle(TEST_DATA_CONTEXT_WORDS_DICE)
+word_index = index.get_index(WORD_INDEX_PICKLE_FILE)
+bigram_index = index.get_index(BIGRAM_INDEX_PICKLE_FILE)
+
+category = "rock"
+category_posting_list = word_index[category]
+r,c = word_simularities.get_dice_based_key_words(word_index, bigram_index, TRAIN_DATA_FOLDER, category_posting_list, DICE_WEIGHT_FILTER_LIMIT, DICE_WORD_FREQUENCY_LIMIT, NUMBER_OF_DOCUMENTS)
+category_in_reference_list = [reference_word for reference_word in r if r[0] == category]
+if not category_in_reference_list:
+    r.append((category,1.0))
+reference_words_map[category] = r
+context_words_map[category] = c
+print_test_data_pickle(reference_words_map, TEST_DATA_REFERENCE_WORDS_DICE)
+print_test_data_pickle(context_words_map, TEST_DATA_CONTEXT_WORDS_DICE)
