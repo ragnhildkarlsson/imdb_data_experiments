@@ -47,7 +47,7 @@ def evaluate_categorization(test_categories,
             for sub_category in category_hierarchy[category]:
                 documents_in_category.update(set(correct_categorization[sub_category]))
         n_docs_in_category = len(documents_in_category)            
-        evaluation[n_docs_in_category_key] = n_docs_in_category
+        evaluation[category][n_docs_in_category_key] = n_docs_in_category
         
         for evaluation_point_index in range(len(evaluation_points)):
 
