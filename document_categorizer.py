@@ -27,20 +27,6 @@ BIGRAM_INDEX_PICKLE_FILE = "data/index_bigram_pickle_file"
 NUMBER_OF_DOCUMENTS = 220000
 DICE_WEIGHT_FILTER_LIMIT = 0.05
 DICE_WORD_FREQUENCY_LIMIT = 0.04
-EVAL_SCALE = 0.2
-
-PRECISSION_KEY = "precission"
-RECALL_KEY = "recall"
-N_RANKED_DOCS_KEY ="n_ranked_docs"
-N_CORRECT_RANKED_DOCS_KEY = "n_correct_ranked_docs:key"
-
-TEST_DATA_CATEGORY_HIEARACHY = {'religion':{'christianity','buddhism','hinduism','islam','judaism'},'christianity':{'christmas'},'sport':{'baseball','basketball','bicycle','boxing','football','golf','hockey','skiing','soccer','surfing','swimming','tennis','wrestling','horseracing','olympic_games'},\
-                                'water_sport':{'surfing','swimming'}, 'motoring':{'motorcycle','car'}, 'nature':{'animals'},'art':{'cinema','theater','music','opera','classical_music', 'jazz','pop', 'country_music','hip_hop', 'dance'}, 'music':{'opera','classical_music','jazz','pop', 'country_music','hip_hop'},\
-                                'science':{'medicine','technology','psychology'},'medicine':{'disability'}, 'education':{'school','college'}, 'crime':{'prison','mafia','drugs','fraud','gambling','terrorism'}}
-
-def load_test_data_pickle(file_path):
-    resourse = pickle.load( open(file_path, "rb" ) )
-    return resourse
 
 def print_test_data_pickle(resourse, file_path):
     pickle.dump(resourse, open(file_path,'wb'))
@@ -142,58 +128,6 @@ def categorize(test_categories, tf_idf_map, reference_words, context_words):
         print('calculated ranked documents for: '+ category)
     return ranked_documents
 
-def evaluate_categorization(test_categories,
-                            categorized_documents, correct_categorization,
-                            category_hierarchy, evaluation_points,
-                            precission_key, recall_key, n_ranked_docs_key,
-                            n_correct_ranked_docs_key):
-    evaluation = {}
-    for category in test_categories:
-        evaluation[category] = {}
-        ranked_documents = categorized_documents[category]
-        ranked_documents = [doc for doc in ranked_documents if not doc[1] == 0]
-        documents_in_category = set(correct_categorization[category])
-        if category in category_hierarchy:
-            for sub_category in category_hierarchy[category]:
-                documents_in_category.update(set(correct_categorization[sub_category]))
-        
-        evaluation_point_index = 0
-        for evaluation_point in evaluation_points: 
-            evaluation[category][evaluation_point_index] = {}
-            n_non_zero_ranked_docs = len(ranked_documents)
-            # handle the case of no ranked  docs
-            if( n_non_zero_ranked_docs==0):
-                evaluation[category][evaluation_point_index][recall_key] = 0
-                evaluation[category][evaluation_point_index][precission_key] = 0
-                evaluation[category][evaluation_point_index][n_ranked_docs_key] = 0
-                evaluation[category][evaluation_point_index][n_correct_ranked_docs_key] = 0
-                evaluation_point_index +=1
-                continue  
-            # create a selection for the evaluation point
-            min_score = ranked_documents[-1][1]
-            max_score = ranked_documents[0][1]
-            score_range = max_score-min_score
-            min_score_in_selection = min_score + ((1-evaluation_point)*score_range)
-            selected_ranked_documents = [ranked_doc for ranked_doc in ranked_documents if ranked_doc[1] >= min_score_in_selection]
-            n_docs_in_selection =  len(selected_ranked_documents)
-            # evaluate precission and recall in selection
-            n_docs_in_category = len(documents_in_category)
-            if n_docs_in_category == 0:
-                print(category)
-                raise
-            n_correct_ranked_docs =0
-            for doc in selected_ranked_documents:
-                if doc[0] in documents_in_category:
-                    n_correct_ranked_docs +=1
-            evaluation[category][evaluation_point_index][precission_key] = (n_correct_ranked_docs/n_docs_in_selection)
-            evaluation[category][evaluation_point_index][recall_key] = (n_correct_ranked_docs/n_docs_in_category)
-            evaluation[category][evaluation_point_index][n_correct_ranked_docs_key] = n_correct_ranked_docs
-            evaluation[category][evaluation_point_index][n_ranked_docs_key] = n_docs_in_selection
-            evaluation_point_index +=1
-        print('Evaluated category: '+category)
-    return evaluation
-
-
 def create_dice_based_categorization(test_categories,tf_idf_map, reference_words_map,context_words_map,pickle_file):
     reference_words = {}
     context_words = {}
@@ -202,114 +136,36 @@ def create_dice_based_categorization(test_categories,tf_idf_map, reference_words
         context_words[category] = set([context_word[0] for context_word in context_words_map[category]])
     categorized_documents = categorize(test_categories,tf_idf_map,reference_words, context_words)
     pprint.pprint(categorized_documents)
-    print_test_data_pickle(categorized_documents, pickle_file)
-
-def get_summerized_precission(evaluation, evaluation_point_index, n_ranked_docs_key,
-                              n_correct_ranked_docs_key):
-    sum_correct_ranked_docs = sum([evaluation[category][evaluation_point_index][n_correct_ranked_docs_key] for category in evaluation])
-    sum_ranked_docs = sum([evaluation[category][evaluation_point_index][n_ranked_docs_key] for category in evaluation])
-    precission = sum_correct_ranked_docs/sum_ranked_docs
-    return precission
-
-def get_summerized_recall(evaluation,  correct_categorization,
-                          evaluation_point_index, n_correct_ranked_docs_key):
-    sum_correct_ranked_docs = sum([evaluation[category][evaluation_point_index][n_correct_ranked_docs_key] for category in evaluation])
-    n_categorized_docs = sum([len( correct_categorization[category]) for category in correct_categorization if category in evaluation])
-    recall = sum_correct_ranked_docs / n_categorized_docs
-    return recall
-
-        
-def test_basic_setup(test_categories, categorized_documents, correct_categorization,
-                     category_hierarchy, evaluation_points,
-                     precission_key, recall_key, n_ranked_docs_key,
-                     n_correct_ranked_docs_key):
-    
-    evaluation = evaluate_categorization(test_categories,
-                                         categorized_documents, correct_categorization,
-                                         category_hierarchy, evaluation_points,
-                                         precission_key, recall_key, n_ranked_docs_key,
-                                         n_correct_ranked_docs_key)
-
-    pprint.pprint(evaluation)
-    precissions = {}
-    recalls = {}
-    for evaluation_point_index in range(len(evaluation_points)):
-        precissions[evaluation_point_index] = get_summerized_precission(evaluation, evaluation_point_index, n_ranked_docs_key, n_correct_ranked_docs_key,)
-        recalls[evaluation_point_index] = get_summerized_recall(evaluation, correct_categorization, evaluation_point_index, n_correct_ranked_docs_key)
-        evaluation_point_index +=1
-    
-    pprint.pprint(precissions)
-    pprint.pprint(recalls)
-    return evaluation, precissions, recalls
-
-
-#EVALUATION
-
-reference_words_map = load_test_data_pickle(TEST_DATA_REFERENCE_WORDS_DICE)
-test_categories = [category for category in reference_words_map if len(reference_words_map[category])<15 and '_' not in category]
-# test_categories = load_test_data_pickle(TEST_DATA_ALL_CATEGORIES_PICKLE)
-correct_categorization = load_test_data_pickle(TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
-categorized_documents = load_test_data_pickle(RESULT_DICE_BASED_RANKING )
-category_hierarchy = TEST_DATA_CATEGORY_HIEARACHY
-evaluation_points = list(np.arange(0,1,EVAL_SCALE))
-evaluation_points.append(1.0)
-evaluation_points.pop(0)
-precission_key = PRECISSION_KEY
-recall_key = RECALL_KEY
-n_ranked_docs_key = N_RANKED_DOCS_KEY
-n_correct_ranked_docs_key = N_CORRECT_RANKED_DOCS_KEY
-e,p,r = test_basic_setup(test_categories, 
-                         categorized_documents, correct_categorization,
-                         category_hierarchy,evaluation_points,precission_key,
-                         recall_key, n_ranked_docs_key,n_correct_ranked_docs_key)
-
-# categorized_documents = load_test_data_pickle(RESULT_DICE_BASED_RANKING)
-
-# evaluation_points = list(np.arange(0,1,evaluation_scale))
-# evaluation_points.append(1.0)
-
-# correct_categorization = load_test_data_pickle(TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
-
-
-# def evaluate_categorization(categorized_documents, correct_categorization,
-#                             category_hierarchy, evaluation_points,
-#                             precission_key, recall_key, n_ranked_docs_key,
-#                             n_correct_ranked_docs_key):
-
-
-
-
-
+    pickle_handler.print_pickle(categorized_documents, pickle_file)
 
 
 # Create procedure
 
 # all_categories, document_texts, category_doc_map = create_test_data_set(TEST_DATA_FOLDER)
-# print_test_data_pickle(category_doc_map, TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
-# print_test_data_pickle(all_categories, TEST_DATA_ALL_CATEGORIES_PICKLE)
+# pickle_handler.print_pickle(category_doc_map, TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
+# pickle_handler.print_pickle(all_categories, TEST_DATA_ALL_CATEGORIES_PICKLE)
 
 # word_index = index.get_index(WORD_INDEX_PICKLE_FILE)
 # bigram_index = index.get_index(BIGRAM_INDEX_PICKLE_FILE)
 # print('loaded index')
 # tf_idf_map = create_docs_id_tf_idf_map(document_texts,word_index, bigram_index, NUMBER_OF_DOCUMENTS)
 # print('created tf_idf_map')
-# print_test_data_pickle(tf_idf_map, TEST_DATA_TF_IDF_MAP_PICKLE)
+# pickle_handler.print_pickle(tf_idf_map, TEST_DATA_TF_IDF_MAP_PICKLE)
 
-# all_categories = load_test_data_pickle(TEST_DATA_ALL_CATEGORIES_PICKLE)
+# all_categories = pickle_handler.load_pickle(TEST_DATA_ALL_CATEGORIES_PICKLE)
 # all_categories = [c for c in all_categories if not c =="no_category"]
 # print(all_categories)
 # word_index = index.get_index(WORD_INDEX_PICKLE_FILE)
 # bigram_index = index.get_index(BIGRAM_INDEX_PICKLE_FILE)
 # reference_words, context_words =  create_dice_keyword_maps(all_categories, word_index,bigram_index)
-# print_test_data_pickle(reference_words,TEST_DATA_REFERENCE_WORDS_DICE)
-# print_test_data_pickle(context_words,TEST_DATA_CONTEXT_WORDS_DICE)
+# pickle_handler.print_pickle(reference_words,TEST_DATA_REFERENCE_WORDS_DICE)
+# pickle_handler.print_pickle(context_words,TEST_DATA_CONTEXT_WORDS_DICE)
 
-# reference_words_map = load_test_data_pickle(TEST_DATA_REFERENCE_WORDS_DICE)
-# context_words_map = load_test_data_pickle(TEST_DATA_CONTEXT_WORDS_DICE)
+# reference_words_map = pickle_handler.load_pickle(TEST_DATA_REFERENCE_WORDS_DICE)
+# context_words_map = pickle_handler.load_pickle(TEST_DATA_CONTEXT_WORDS_DICE)
 # test_categories = [category for category in reference_words_map if len(reference_words_map[category])<15 and '_' not in category]
-# test_categories = load_test_data_pickle(TEST_DATA_ALL_CATEGORIES_PICKLE)
+# test_categories = pickle_handler.load_pickle(TEST_DATA_ALL_CATEGORIES_PICKLE)
 
-# tf_idf_map = load_test_data_pickle(TEST_DATA_TF_IDF_MAP_PICKLE)
-
+# tf_idf_map = pickle_handler.load_pickle(TEST_DATA_TF_IDF_MAP_PICKLE)
 
 

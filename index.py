@@ -1,10 +1,10 @@
 import os
-import pickle
+import pickle_handler
 
 import document_processer 
 
 def get_index(file_path):
-    index = pickle.load( open(file_path, "rb" ) )
+    index = pickle_handler.load_pickle(file_path)
     return index
 
 def intersection_search(posting_list_1, posting_list_2):

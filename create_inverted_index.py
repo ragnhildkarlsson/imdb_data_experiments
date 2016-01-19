@@ -3,7 +3,7 @@ import random
 import re
 import os
 from nltk.corpus import stopwords
-import pickle
+import pickle_handler
 
 import document_processer 
 
@@ -46,21 +46,6 @@ def print_train_data_subset_list_to_file(file_index_set, subset_data_list_file_n
     with open(list_file_path, 'w') as f:
         for line in file_path_list:
             f.write(line+'\n')
-
-def print_index_to_file(index, index_folder):
-    if not os.path.exists(index_folder):
-        os.makedirs(index_folder)
-    print(len(index))
-    n_printed_words = 0            
-    for word in index:
-        if(n_printed_words%5000)==0:
-            print(n_printed_words)
-        posting_list_file = os.path.join(index_folder, word)
-        pickle.dump(index[word], open(posting_list_file,'wb'))
-        n_printed_words +=1
-
-def print_index_pickle_file(index, index_file):
-    pickle.dump(index, open(index_file,'wb'))
 
 
 def create_inverted_index_word(file_path, set_trainings_data_doc_numbers):
@@ -126,7 +111,7 @@ print_train_data_subset_list_to_file(file_index_set, FILENAME_TRAIN_DATA_SUBSET,
 index = create_inverted_index_word(TRAIN_DATA_FILE,file_index_set)
 index_folder = os.path.join(ROOT_DATA_FOLDER, INDEX_FOLDER)
 # print_index_to_file(index, index_folder)
-print_index_pickle_file(index, WORD_INDEX_PICKLE_FILE)
+pickle_handler.print_pickle(index, WORD_INDEX_PICKLE_FILE)
 bigram_index = create_inverted_index_bigram(TRAIN_DATA_FILE,file_index_set)
-print_index_pickle_file(bigram_index, BIGRAM_INDEX_PICKLE_FILE)
+pickle_handler.print_pickle(bigram_index, BIGRAM_INDEX_PICKLE_FILE)
 #print_index_to_file(bigram_index, index_folder)
