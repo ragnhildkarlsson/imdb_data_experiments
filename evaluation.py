@@ -124,8 +124,9 @@ def test_basic_setup(test_categories, categorized_documents, correct_categorizat
 #EVALUATION
 
 reference_words_map = pickle_handler.load_pickle(TEST_DATA_REFERENCE_WORDS_DICE)
-test_categories = [category for category in reference_words_map if len(reference_words_map[category])<15 and '_' not in category]
-# test_categories = pickle_handler.load_pickle(TEST_DATA_ALL_CATEGORIES_PICKLE)
+all_categories = pickle_handler.load_pickle(TEST_DATA_ALL_CATEGORIES_PICKLE)
+test_categories = [category for category in all_categories if len(reference_words_map[category])<15 and '_' not in category]
+# 
 correct_categorization = pickle_handler.load_pickle(TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE)
 categorized_documents = pickle_handler.load_pickle(RESULT_DICE_BASED_RANKING )
 category_hierarchy = TEST_DATA_CATEGORY_HIEARACHY
