@@ -105,7 +105,8 @@ def test_basic_setup(test_categories, categorized_documents, correct_categorizat
                                          categorized_documents, correct_categorization,
                                          category_hierarchy, evaluation_points,
                                          precission_key, recall_key, n_ranked_docs_key,
-                                         n_correct_ranked_docs_key)
+                                         n_correct_ranked_docs_key,
+                                         n_docs_in_category_key)
 
     pprint.pprint(evaluation)
     precissions = {}
@@ -135,10 +136,11 @@ precission_key = PRECISSION_KEY
 recall_key = RECALL_KEY
 n_ranked_docs_key = N_RANKED_DOCS_KEY
 n_correct_ranked_docs_key = N_CORRECT_RANKED_DOCS_KEY
+n_docs_in_category_key = N_DOCS_IN_CATEGORY_KEY
 e,p,r = test_basic_setup(test_categories, 
                          categorized_documents, correct_categorization,
                          category_hierarchy,evaluation_points,precission_key,
-                         recall_key, n_ranked_docs_key,n_correct_ranked_docs_key)
+                         recall_key, n_ranked_docs_key,n_correct_ranked_docs_key,n_docs_in_category_key)
 
 
 # categorized_documents = pickle_handler.load_pickle(RESULT_DICE_BASED_RANKING)
