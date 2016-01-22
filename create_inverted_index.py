@@ -9,15 +9,12 @@ import document_processer
 
 NUMBER_OF_DOCUMENTS = 458712
 
-ROOT_DATA_FOLDER = "data"
 TRAIN_DATA_FOLDER = "data/train_data"
 TRAIN_DATA_FILE = "data/all_plots_train_delimeter"
-FILENAME_TRAIN_DATA_SUBSET = "list_train_data_subset"
 ENCODING="ISO-8859-1"
-INDEX_FOLDER = "index"
-STOP_WORD_FILE_PATH = "data/stop_word_list"
-WORD_INDEX_PICKLE_FILE = "data/index_word_pickle_file"
-BIGRAM_INDEX_PICKLE_FILE = "data/index_bigram_pickle_file"
+INDEX_FOLDER = "data/index"
+WORD_INDEX_PICKLE_FILE = "data/index/index_word_pickle_file"
+BIGRAM_INDEX_PICKLE_FILE = "data/index/index_bigram_pickle_file"
 
 def is_delimeter_line(line):
     break_line_matcher = '^---.*' 
@@ -34,19 +31,6 @@ def get_set_of_random_numbers(max_number, size):
     l =  l[:size]
     s = set(l)
     return s
-
-def print_train_data_subset_list_to_file(file_index_set, subset_data_list_file_name, list_file_folder, data_folder):
-    file_id_list = list(file_index_set)
-    file_path_list = []
-    for file_id in file_index_set:
-        file_path  = os.path.join(data_folder, str(file_id))
-        file_path_list.append(file_path)
-
-    list_file_path = os.path.join(list_file_folder, subset_data_list_file_name)
-    with open(list_file_path, 'w') as f:
-        for line in file_path_list:
-            f.write(line+'\n')
-
 
 def create_inverted_index_word(file_path, set_trainings_data_doc_numbers):
     index = {}
@@ -103,15 +87,11 @@ def create_inverted_index_bigram(file_path, set_trainings_data_doc_numbers):
                 plot_lines = []
             else:
                 plot_lines.append(line)
-
     return index                
 
 file_index_set = get_set_of_random_numbers(NUMBER_OF_DOCUMENTS, 220000)
-print_train_data_subset_list_to_file(file_index_set, FILENAME_TRAIN_DATA_SUBSET, ROOT_DATA_FOLDER, TRAIN_DATA_FOLDER)
 index = create_inverted_index_word(TRAIN_DATA_FILE,file_index_set)
-index_folder = os.path.join(ROOT_DATA_FOLDER, INDEX_FOLDER)
-# print_index_to_file(index, index_folder)
+index_folder = INDEX_FOLDER
 pickle_handler.print_pickle(index, WORD_INDEX_PICKLE_FILE)
 bigram_index = create_inverted_index_bigram(TRAIN_DATA_FILE,file_index_set)
 pickle_handler.print_pickle(bigram_index, BIGRAM_INDEX_PICKLE_FILE)
-#print_index_to_file(bigram_index, index_folder)
