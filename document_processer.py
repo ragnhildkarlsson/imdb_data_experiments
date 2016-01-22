@@ -45,17 +45,3 @@ def preprocess_document(document):
 def bigram_to_string(bigram):
     return bigram[0]+'_'+bigram[1]
 
-
-
-
-
-
-
-
-
-# # TODO discuss reasonable list
-#     if n_words_in_doc > 100: 
-#         document = [w for w in document if (freqDist[w]/n_words_in_doc)<0.25]
-#     # remove any remaining stop words
-#     stop_words = stopwords.words('english')
-#     document = [w for w in document if w not in stop_words]
