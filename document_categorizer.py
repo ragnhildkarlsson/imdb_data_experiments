@@ -138,6 +138,8 @@ def create_dice_based_categorization(test_categories,tf_idf_map, reference_words
     pprint.pprint(categorized_documents)
     pickle_handler.print_pickle(categorized_documents, pickle_file)
 
+def 
+
 
 # Create procedure
 
@@ -161,11 +163,7 @@ def create_dice_based_categorization(test_categories,tf_idf_map, reference_words
 # pickle_handler.print_pickle(reference_words,TEST_DATA_REFERENCE_WORDS_DICE)
 # pickle_handler.print_pickle(context_words,TEST_DATA_CONTEXT_WORDS_DICE)
 
-# reference_words_map = pickle_handler.load_pickle(TEST_DATA_REFERENCE_WORDS_DICE)
-# context_words_map = pickle_handler.load_pickle(TEST_DATA_CONTEXT_WORDS_DICE)
-# test_categories = [category for category in reference_words_map if len(reference_words_map[category])<15 and '_' not in category]
-# test_categories = pickle_handler.load_pickle(TEST_DATA_ALL_CATEGORIES_PICKLE)
 
-# tf_idf_map = pickle_handler.load_pickle(TEST_DATA_TF_IDF_MAP_PICKLE)
+
 
 

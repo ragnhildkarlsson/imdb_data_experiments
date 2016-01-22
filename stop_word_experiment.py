@@ -1,3 +1,4 @@
+import index
 
 def print_stop_word_list_to_file(index, stop_word_file_path):
     n_words_in_corpus = sum([sum([post[1] for post in index[word]]) for word in index])
@@ -12,3 +13,10 @@ def print_stop_word_list_to_file(index, stop_word_file_path):
         for stop_word in stop_words:
                 f.write(stop_word+'\n')
 
+def print_words_high_doc_frequency(index, doc_frequency_limit ,docs_in_corpus):
+    frequent_words =set()
+    for word in index:
+        n_docs = len(index_word)
+        if n_docs/docs_in_corpus > doc_frequency_limit:
+            print word
+            frequent_words.add(word)
