@@ -10,11 +10,13 @@ import document_processer
 NUMBER_OF_DOCUMENTS = 458712
 
 TRAIN_DATA_FOLDER = "data/train_data"
+NUMBER_OF_DOCUMENTS_IN_INDEX = 220000
 TRAIN_DATA_FILE = "data/all_plots_train_delimeter"
 ENCODING="ISO-8859-1"
 INDEX_FOLDER = "data/index"
 WORD_INDEX_PICKLE_FILE = "data/index/index_word_pickle_file"
 BIGRAM_INDEX_PICKLE_FILE = "data/index/index_bigram_pickle_file"
+
 
 def is_delimeter_line(line):
     break_line_matcher = '^---.*' 
@@ -89,7 +91,7 @@ def create_inverted_index_bigram(file_path, set_trainings_data_doc_numbers):
                 plot_lines.append(line)
     return index                
 
-file_index_set = get_set_of_random_numbers(NUMBER_OF_DOCUMENTS, 220000)
+file_index_set = get_set_of_random_numbers(NUMBER_OF_DOCUMENTS,NUMBER_OF_DOCUMENTS_IN_INDEX)
 index = create_inverted_index_word(TRAIN_DATA_FILE,file_index_set)
 index_folder = INDEX_FOLDER
 pickle_handler.print_pickle(index, WORD_INDEX_PICKLE_FILE)
