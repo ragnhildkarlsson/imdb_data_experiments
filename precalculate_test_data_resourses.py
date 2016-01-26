@@ -79,15 +79,15 @@ def create_dice_ranked_keywords(n,categories, word_index, bigram_index, train_da
         if category not in word_index and category not in bigram_index:
             print('WARNING: Category not in index: '+ category)
         else:
+            category_posting_list = []
             if '_' in category:
                 category_posting_list = bigram_index[category]
-                print("Number of docs with category name: " + str(len(category_posting_list)))
-                dice_ranked_keywords = word_simularities.get_n_dice_based_key_words(n, word_index, bigram_index, train_data_folder, category_posting_list)
             else:
                 category_posting_list = word_index[category]
-                print("Number of docs with category name: " + str(len(category_posting_list)))
-                r,c = word_simularities.get_n_dice_based_key_words(word_index, bigram_index, train_data_folder, category_posting_list, DICE_WEIGHT_FILTER_LIMIT, DICE_WORD_FREQUENCY_LIMIT, NUMBER_OF_DOCUMENTS)
-
+            
+            print("Number of docs with category name: " + str(len(category_posting_list)))
+            dice_ranked_keywords = word_simularities.get_n_dice_based_key_words(n, word_index, bigram_index, train_data_folder, category_posting_list)
+           
         #ensure category name have high rank
         dice_ranked_keywords = [ranked_word for ranked_word in dice_ranked_keywords if ranked_word[0] != category]
         dice_ranked_keywords.append((category,1.0))
