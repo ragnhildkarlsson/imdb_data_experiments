@@ -1,6 +1,9 @@
-pickle_handler
+import os
+import document_processer
+import pickle_handler
 
 TEST_DATA_FOLDER = "data/test_data"
+TRAIN_DATA_FOLDER = "data/train_data"
 TEST_DATA_GOLD_STANDARD_CATEGORIZATION = "data/test_data_pickles/gold_standard_categorization_pickle"
 TEST_DATA_ALL_CATEGORIES_LIST = "data/test_data_pickles/all_categories_list"
 TEST_DATA_TF_IDF_MAP = "data/test_data_pickles/tf_idf_map_pickle"
@@ -9,6 +12,7 @@ TEST_DATA_DICE_BASED_KEYWORD_RANKING = "data/test_data_pickles/dice_based_keywor
 WORD_INDEX_PICKLE_FILE = "data/index/index_word_pickle_file"
 BIGRAM_INDEX_PICKLE_FILE = "data/index/index_bigram_pickle_file"
 NUMBER_OF_DOCUMENTS = 220000
+NUMBER_OF_RANKED_KEYWORDS_DICE = 1000
 
 def create_test_data_set(test_folder):
     sub_directories = document_processer.get_names_of_subdirectory_list(test_folder)
@@ -65,29 +69,36 @@ def create_docs_id_tf_idf_map(document_texts, word_index, bigram_index, n_docs):
 def create_dice_ranked_keywords(n,categories, word_index, bigram_index, train_data_folder):
     reference_words = {}
     context_words = {}
+    categories_keywords_map = {}
     for category in categories:
+        print("Calculate dice keywords for category "+ category)
         dice_ranked_keywords = []
         if category not in word_index and category not in bigram_index:
             print('WARNING: Category not in index: '+ category)
         else:
             if '_' in category:
                 category_posting_list = bigram_index[category]
+                print("Number of docs with category name: " + len(category_posting_list))
                 dice_ranked_keywords = word_simularities.get_n_dice_based_key_words(n, word_index, bigram_index, train_data_folder, category_posting_list)
             else:
+                print("Number of docs with category name: " + len(category_posting_list))
                 category_posting_list = word_index[category]
                 r,c = word_simularities.get_dice_based_key_words(word_index, bigram_index, train_data_folder, category_posting_list, DICE_WEIGHT_FILTER_LIMIT, DICE_WORD_FREQUENCY_LIMIT, NUMBER_OF_DOCUMENTS)
 
         #ensure category name have high rank
         dice_ranked_keywords = [ranked_word for ranked_word in dice_ranked_keywords if ranked_word[0] != category]
         dice_ranked_keywords.append((category,1.0))
-    return dice_ranked_keywords
-
-def create gavagai_ranked_keywords():
-    #TODO
-    pass
+        categories_keywords_map[category] = dice_ranked_keywords
+    return categories_keywords_map
 
 # CREATE PROCEDURE
-all_categories, document_texts, gold_standard_categorization  = create_test_data_set(TEST_DATA_FOLDER)
-pickle_handler.print_pickle(all_categories, TEST_DATA_ALL_CATEGORIES_LIST)
-pickle_handler.print_pickle(gold_standard_categorization,TEST_DATA_GOLD_STANDARD_CATEGORIZATION)
+# all_categories, document_texts, gold_standard_categorization  = create_test_data_set(TEST_DATA_FOLDER)
+# pickle_handler.print_pickle(all_categories, TEST_DATA_ALL_CATEGORIES_LIST)
+# pickle_handler.print_pickle(gold_standard_categorization,TEST_DATA_GOLD_STANDARD_CATEGORIZATION)
 
+# word_index = pickle_handler.load_pickle(WORD_INDEX_PICKLE_FILE)
+# bigram_index = pickle_handler.load_pickle(BIGRAM_INDEX_PICKLE_FILE)
+# train_data_folder = T
+# all_categories = pickle_handler.load_pickle(TEST_DATA_ALL_CATEGORIES_LIST)
+# dice_ranked_keywords = create_dice_ranked_keywords(NUMBER_OF_RANKED_KEYWORDS_DICE,all_categories, word_index,bigram_index,train_data_folder)
+# pickle_handler.print_pickle(dice_ranked_keywords,TEST_DATA_DICE_BASED_KEYWORD_RANKING)

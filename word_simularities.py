@@ -15,9 +15,6 @@ def get_list_of_categories(test_data_folder):
 def calculate_dice_coefficients_word(category_posting_list, word_index, train_data_folder):
     # returns {w1:dice(cat,w1),w2:dice(cat,w2)}
     dice_coefficents = {}
-    print("Number of docs")
-    print(len(category_posting_list))
-    
     calculated_posts = 0
     for post in category_posting_list:
         doc_file_name = str(post[0])
@@ -53,16 +50,15 @@ def calculate_dice_coefficients_bigram(category_posting_list, bigram_index, trai
     return dice_coefficents
 
 def calculate_top_n_neigbours(n, word_simularity_list):
-    dice_list = sorted(word_simularity_list, key=itemgetter(1), reverse=True)
-    return dice_list[:n]
+    #sort on simularity
+    top_list = sorted(word_simularity_list, key=itemgetter(1), reverse=True)
+    return top_list[:n]
 
-def get_n_dice_based_key_words(n, word_index, bigram_index, train_data_folder, category_posting_list, weight_filter_limit, frequency_limit, n_docs_in_corpus):
+def get_n_dice_based_key_words(n, word_index, bigram_index, train_data_folder, category_posting_list):
     dice_coefficents_word = calculate_dice_coefficients_word(category_posting_list, word_index, train_data_folder)
     top_dice_coefficients_word = calculate_top_n_neigbours(n, dice_coefficents_word.items())
     dice_coefficents_bigram = calculate_dice_coefficients_bigram(category_posting_list, bigram_index, train_data_folder)
     top_dice_coefficients_bigram = calculate_top_n_neigbours(dice_coefficents_bigram.items())
     top_n_dice_keywords = calculate_top_n_neigbours(n, top_dice_coefficients_word + top_dice_coefficients_bigram) 
     return top_n_dice_keywords
-
-
 
