@@ -91,9 +91,9 @@ def create_inverted_index_bigram(file_path, set_trainings_data_doc_numbers):
                 plot_lines.append(line)
     return index                
 
-file_index_set = get_set_of_random_numbers(NUMBER_OF_DOCUMENTS,NUMBER_OF_DOCUMENTS_IN_INDEX)
-index = create_inverted_index_word(TRAIN_DATA_FILE,file_index_set)
-index_folder = INDEX_FOLDER
-pickle_handler.print_pickle(index, WORD_INDEX_PICKLE_FILE)
-bigram_index = create_inverted_index_bigram(TRAIN_DATA_FILE,file_index_set)
-pickle_handler.print_pickle(bigram_index, BIGRAM_INDEX_PICKLE_FILE)
+# file_index_set = get_set_of_random_numbers(NUMBER_OF_DOCUMENTS,NUMBER_OF_DOCUMENTS_IN_INDEX)
+# index = create_inverted_index_word(TRAIN_DATA_FILE,file_index_set)
+# index_folder = INDEX_FOLDER
+# pickle_handler.print_pickle(index, WORD_INDEX_PICKLE_FILE)
+# bigram_index = create_inverted_index_bigram(TRAIN_DATA_FILE,file_index_set)
+# pickle_handler.print_pickle(bigram_index, BIGRAM_INDEX_PICKLE_FILE)
