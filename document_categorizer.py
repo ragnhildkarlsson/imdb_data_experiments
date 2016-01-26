@@ -3,12 +3,12 @@ import nltk
 import numpy as np
 import os
 from operator import itemgetter
-import pickle
 import pprint
 
 import index
 import document_processer
 import doc_word_simularity
+import pickle_handler
 import word_simularities
 
 
@@ -19,18 +19,13 @@ TEST_DATA_CATEGORIZED_DOCUMENTS_PICKLE = "data/test_data_pickles/categorized_doc
 TEST_DATA_REFERENCE_WORDS_DICE = "data/test_data_pickles/test_reference_words_dice"
 TEST_DATA_CONTEXT_WORDS_DICE = "data/test_data_pickles/test_context_words_dice"
 TEST_CATEGORIES = "data/test_data/test_categories"
-RESULT_DICE_BASED_RANKING = "result/dice_based_ranking"
 
 TRAIN_DATA_FOLDER = "data/train_data"
-WORD_INDEX_PICKLE_FILE = "data/index_word_pickle_file"
-BIGRAM_INDEX_PICKLE_FILE = "data/index_bigram_pickle_file"
+WORD_INDEX_PICKLE_FILE = "data/index/index_word_pickle_file"
+BIGRAM_INDEX_PICKLE_FILE = "data/index/index_bigram_pickle_file"
 NUMBER_OF_DOCUMENTS = 220000
 DICE_WEIGHT_FILTER_LIMIT = 0.05
 DICE_WORD_FREQUENCY_LIMIT = 0.04
-
-def print_test_data_pickle(resourse, file_path):
-    pickle.dump(resourse, open(file_path,'wb'))
-
 
 def create_test_data_set(test_folder):
     sub_directories = document_processer.get_names_of_subdirectory_list(test_folder)
@@ -83,7 +78,7 @@ def create_docs_id_tf_idf_map(document_texts, word_index, bigram_index, n_docs):
 
     return doc_tf_idf_map
 
-def create_dice_keyword_maps(categories, word_index, bigram_index):
+def create_dice_keyword_maps(categories, word_index, bigram_index, train_data_folder):
     reference_words = {}
     context_words = {}
     for category in categories:
@@ -95,10 +90,10 @@ def create_dice_keyword_maps(categories, word_index, bigram_index):
         else:
             if '_' in category:
                 category_posting_list = bigram_index[category]
-                r,c = word_simularities.get_dice_based_key_words(word_index, bigram_index, TRAIN_DATA_FOLDER, category_posting_list, DICE_WEIGHT_FILTER_LIMIT, DICE_WORD_FREQUENCY_LIMIT, NUMBER_OF_DOCUMENTS)
+                r,c = word_simularities.get_dice_based_key_words(word_index, bigram_index, train_data_folder, category_posting_list, DICE_WEIGHT_FILTER_LIMIT, DICE_WORD_FREQUENCY_LIMIT, NUMBER_OF_DOCUMENTS)
             else:
                 category_posting_list = word_index[category]
-                r,c = word_simularities.get_dice_based_key_words(word_index, bigram_index, TRAIN_DATA_FOLDER, category_posting_list, DICE_WEIGHT_FILTER_LIMIT, DICE_WORD_FREQUENCY_LIMIT, NUMBER_OF_DOCUMENTS)
+                r,c = word_simularities.get_dice_based_key_words(word_index, bigram_index, train_data_folder, category_posting_list, DICE_WEIGHT_FILTER_LIMIT, DICE_WORD_FREQUENCY_LIMIT, NUMBER_OF_DOCUMENTS)
         
         category_in_reference_list = [reference_word for reference_word in r if r[0] == category]
         if not category_in_reference_list:
@@ -117,7 +112,8 @@ def get_ranked_documents(category, tf_idf_map, reference_words, context_words):
         if not referens_simularity == 0:
             context_simularity = doc_word_simularity.get_cosinus_simularity(tf_idf_map[document], context_words)
         simularity = context_simularity*referens_simularity
-        ranked_documents.append((document,simularity))  
+        if(simularity != 0):
+            ranked_documents.append((document,simularity))  
     ranked_documents = sorted(ranked_documents, key=itemgetter(1), reverse=True)
     return ranked_documents
  
@@ -128,7 +124,7 @@ def categorize(test_categories, tf_idf_map, reference_words, context_words):
         print('calculated ranked documents for: '+ category)
     return ranked_documents
 
-def create_dice_based_categorization(test_categories,tf_idf_map, reference_words_map,context_words_map,pickle_file):
+def create_dice_based_categorization(test_categories,tf_idf_map, reference_words_map, context_words_map, pickle_file):
     reference_words = {}
     context_words = {}
     for category in test_categories:
@@ -138,7 +134,6 @@ def create_dice_based_categorization(test_categories,tf_idf_map, reference_words
     pprint.pprint(categorized_documents)
     pickle_handler.print_pickle(categorized_documents, pickle_file)
 
-def 
 
 
 # Create procedure
@@ -159,9 +154,10 @@ def
 # print(all_categories)
 # word_index = index.get_index(WORD_INDEX_PICKLE_FILE)
 # bigram_index = index.get_index(BIGRAM_INDEX_PICKLE_FILE)
-# reference_words, context_words =  create_dice_keyword_maps(all_categories, word_index,bigram_index)
+# reference_words, context_words =  create_dice_keyword_maps(all_categories, word_index,bigram_index, TRAIN_DATA_FOLDER)
 # pickle_handler.print_pickle(reference_words,TEST_DATA_REFERENCE_WORDS_DICE)
 # pickle_handler.print_pickle(context_words,TEST_DATA_CONTEXT_WORDS_DICE)
+
 
 
 
