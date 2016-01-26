@@ -58,7 +58,7 @@ def get_n_dice_based_key_words(n, word_index, bigram_index, train_data_folder, c
     dice_coefficents_word = calculate_dice_coefficients_word(category_posting_list, word_index, train_data_folder)
     top_dice_coefficients_word = calculate_top_n_neigbours(n, dice_coefficents_word.items())
     dice_coefficents_bigram = calculate_dice_coefficients_bigram(category_posting_list, bigram_index, train_data_folder)
-    top_dice_coefficients_bigram = calculate_top_n_neigbours(dice_coefficents_bigram.items())
-    top_n_dice_keywords = calculate_top_n_neigbours(n, top_dice_coefficients_word + top_dice_coefficients_bigram) 
+    top_dice_coefficients_bigram = calculate_top_n_neigbours(n, dice_coefficents_bigram.items())
+    top_n_dice_keywords = calculate_top_n_neigbours(n, (top_dice_coefficients_word + top_dice_coefficients_bigram))  
     return top_n_dice_keywords
 
