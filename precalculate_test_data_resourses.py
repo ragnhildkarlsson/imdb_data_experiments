@@ -78,11 +78,11 @@ def create_dice_ranked_keywords(n,categories, word_index, bigram_index, train_da
         else:
             if '_' in category:
                 category_posting_list = bigram_index[category]
-                print("Number of docs with category name: " + len(category_posting_list))
+                print("Number of docs with category name: " + str(len(category_posting_list))
                 dice_ranked_keywords = word_simularities.get_n_dice_based_key_words(n, word_index, bigram_index, train_data_folder, category_posting_list)
             else:
-                print("Number of docs with category name: " + len(category_posting_list))
                 category_posting_list = word_index[category]
+                print("Number of docs with category name: " + str(len(category_posting_list))
                 r,c = word_simularities.get_dice_based_key_words(word_index, bigram_index, train_data_folder, category_posting_list, DICE_WEIGHT_FILTER_LIMIT, DICE_WORD_FREQUENCY_LIMIT, NUMBER_OF_DOCUMENTS)
 
         #ensure category name have high rank
@@ -96,9 +96,9 @@ def create_dice_ranked_keywords(n,categories, word_index, bigram_index, train_da
 # pickle_handler.print_pickle(all_categories, TEST_DATA_ALL_CATEGORIES_LIST)
 # pickle_handler.print_pickle(gold_standard_categorization,TEST_DATA_GOLD_STANDARD_CATEGORIZATION)
 
-# word_index = pickle_handler.load_pickle(WORD_INDEX_PICKLE_FILE)
-# bigram_index = pickle_handler.load_pickle(BIGRAM_INDEX_PICKLE_FILE)
-# train_data_folder = T
-# all_categories = pickle_handler.load_pickle(TEST_DATA_ALL_CATEGORIES_LIST)
-# dice_ranked_keywords = create_dice_ranked_keywords(NUMBER_OF_RANKED_KEYWORDS_DICE,all_categories, word_index,bigram_index,train_data_folder)
-# pickle_handler.print_pickle(dice_ranked_keywords,TEST_DATA_DICE_BASED_KEYWORD_RANKING)
+word_index = pickle_handler.load_pickle(WORD_INDEX_PICKLE_FILE)
+bigram_index = pickle_handler.load_pickle(BIGRAM_INDEX_PICKLE_FILE)
+train_data_folder = TRAIN_DATA_FOLDER
+all_categories = pickle_handler.load_pickle(TEST_DATA_ALL_CATEGORIES_LIST)
+dice_ranked_keywords = create_dice_ranked_keywords(NUMBER_OF_RANKED_KEYWORDS_DICE,all_categories, word_index,bigram_index,train_data_folder)
+pickle_handler.print_pickle(dice_ranked_keywords,TEST_DATA_DICE_BASED_KEYWORD_RANKING)
