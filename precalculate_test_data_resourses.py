@@ -1,8 +1,10 @@
 import os
 import document_processer
+import keywords_setups
 import index
 import pickle_handler
 import word_simularities
+
 
 TEST_DATA_FOLDER = "data/test_data"
 TRAIN_DATA_FOLDER = "data/train_data"
@@ -19,12 +21,14 @@ TEST_CATEGORIES = "data/test_data/test_categories"
 FREQUENT_WORDS_SET = "data/index/frequent_words"
 WORD_INDEX_PICKLE_FILE = "data/index/index_word_pickle_file"
 BIGRAM_INDEX_PICKLE_FILE = "data/index/index_bigram_pickle_file"
+BIGRAM_DELIMETER = "_"
 NUMBER_OF_DOCUMENTS_IN_CORPUS = 220000
 NUMBER_OF_RANKED_KEYWORDS_DICE = 1000
 DICE_WEIGHT_FILTER_LIMIT = 0.05
+FREQUENT_WORD_LIMIT = 0.04
 
-def create_frequent_words_set(index, frequent_words_limit, n_docs_in_corpus):
-    frequent_words = index.get_freequent_words(index, doc_frequency_limit, n_docs_in_corpus)
+def create_frequent_words_set(word_index, doc_frequency_limit, n_docs_in_corpus):
+    frequent_words = index.get_frequent_words(word_index, doc_frequency_limit, n_docs_in_corpus)
     return frequent_words
 
 
@@ -115,7 +119,7 @@ def get_basic_keywords_dice(keyword_ranking_dice,
     reference_words = {}
     context_words = {}
     for category in all_categories:
-        r, c = keyword_experiments.get_default_keywords_dice(keyword_ranking_dice, weight_limit_reference_words)
+        r, c = keywords_setups.get_default_keywords_dice(keyword_ranking_dice[category], weight_limit_reference_words)
         reference_words[category] = r
         context_words[category] = c
 
@@ -145,13 +149,13 @@ def get_basic_test_categories(all_categories,
 
 # FREQUENT WORDS
 word_index = pickle_handler.load_pickle(WORD_INDEX_PICKLE_FILE)
-frequent_words = create_frequent_words_set()
+frequent_words = create_frequent_words_set(word_index,FREQUENT_WORD_LIMIT,NUMBER_OF_DOCUMENTS_IN_CORPUS)
 pickle_handler.print_pickle(frequent_words, FREQUENT_WORDS_SET)
 
 #BASIC DICE KEYWORDS
 all_categories = pickle_handler.load_pickle(TEST_DATA_ALL_CATEGORIES_LIST)
-keyword_ranking_dice = pickle_handler.load_pickle()
-reference_words, context_words = get_default_keywords_dice(keyword_ranking_dice, DICE_WEIGHT_FILTER_LIMIT, all_categories)
+keyword_ranking_dice = pickle_handler.load_pickle(TEST_DATA_DICE_BASED_KEYWORD_RANKING)
+reference_words, context_words = get_basic_keywords_dice(keyword_ranking_dice, DICE_WEIGHT_FILTER_LIMIT, all_categories)
 pickle_handler.print_pickle(reference_words, BASIC_REFERENCE_WORDS_DICE)
 pickle_handler.print_pickle(context_words, BASIC_CONTEXT_WORDS_DICE)
 
