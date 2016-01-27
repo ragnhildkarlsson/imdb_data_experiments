@@ -1,6 +1,6 @@
 import os
 import document_processer
-import keywords_setups
+import keyword_setups
 import index
 import pickle_handler
 import word_simularities
@@ -119,7 +119,7 @@ def get_basic_keywords_dice(keyword_ranking_dice,
     reference_words = {}
     context_words = {}
     for category in all_categories:
-        r, c = keywords_setups.get_default_keywords_dice(keyword_ranking_dice[category], weight_limit_reference_words)
+        r, c = keyword_setups.get_default_keywords_dice(keyword_ranking_dice[category], weight_limit_reference_words)
         reference_words[category] = r
         context_words[category] = c
 
