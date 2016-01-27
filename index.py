@@ -25,7 +25,7 @@ def intersection_search(posting_list_1, posting_list_2):
 
     return result;
     
-def get_freequent_words(index, doc_frequency_limit, n_docs_in_corpus):
+def get_frequent_words(index, doc_frequency_limit, n_docs_in_corpus):
     frequent_words =set()
     for word in index:
         n_docs = len(index[word])
