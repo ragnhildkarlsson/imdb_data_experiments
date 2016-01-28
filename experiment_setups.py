@@ -152,7 +152,7 @@ test_categories_exp_1 = test_categories
 reference_words_exp_1 = {}
 context_words_exp_2 = {}
 for category in test_categories:
-    r,c = keyword_setups.get_dice_keywords_filter_word_appear_in_bigram_with_category_name(category_name,
-                                                                                           default_reference_words_dice,
-                                                                                           default_context_words_dice,
+    r,c = keyword_setups.get_dice_keywords_filter_word_appear_in_bigram_with_category_name(category,
+                                                                                           default_reference_words_dice[category],
+                                                                                           default_context_words_dice[category],
                                                                                            bigram_delimeter)
