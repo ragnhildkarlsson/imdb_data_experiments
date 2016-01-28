@@ -163,4 +163,5 @@ pickle_handler.print_pickle(context_words, BASIC_CONTEXT_WORDS_DICE)
 all_categories = pickle_handler.load_pickle(TEST_DATA_ALL_CATEGORIES_LIST)
 reference_words = pickle_handler.load_pickle(BASIC_REFERENCE_WORDS_DICE)
 test_categories = get_basic_test_categories(all_categories,BIGRAM_DELIMETER,reference_words)
+pickle_handler.print_pickle(test_categories, TEST_CATEGORIES)
 
