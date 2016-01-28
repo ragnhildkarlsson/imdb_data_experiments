@@ -83,8 +83,8 @@ def get_summarized_recall(evaluation,evaluation_point_index,
 def get_summarized_recalls(evaluation,evaluation_points,n_correct_ranked_docs_key,n_docs_in_category_key):
     summarized_recalls = {}
     for evaluation_point_index in range(len(evaluation_points)):           
-        summarized_racalls[evaluation_point_index] = get_summarized_recall(evaluation, evaluation_point_index, n_correct_ranked_docs_key, n_docs_in_category_key)
-    return summarized_racalls
+        summarized_recalls[evaluation_point_index] = get_summarized_recall(evaluation, evaluation_point_index, n_correct_ranked_docs_key, n_docs_in_category_key)
+    return summarized_recalls
 
 def get_summarized_precissions(evaluation, evaluation_points, n_ranked_docs_key,
                               n_correct_ranked_docs_key):
