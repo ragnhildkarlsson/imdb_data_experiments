@@ -60,7 +60,7 @@ class Experiment:
         self.summarized_recalls =  summarized_recalls
 
 def get_experiment(id,
-                   test_categories,
+                   test_categories_exp,
                    tf_idf_map,
                    reference_words_exp,
                    context_words_exp,
@@ -72,15 +72,14 @@ def get_experiment(id,
                    n_ranked_docs_key,
                    n_correct_ranked_docs_key,
                    n_docs_in_category_key,
-                   evaluation_points,
                    ):
-    ranked_documents = document_categorizer.categorize(test_categories_exp, tf_idf_map, reference_words_exp, context_words_exp)
+    ranked_documents_exp = document_categorizer.categorize(test_categories_exp, tf_idf_map, reference_words_exp, context_words_exp)
     evaluation_exp = evaluation.evaluate_categorization(test_categories_exp,
-                                                      ranked_documents_exp, gold_standard_categorization,
-                                                      category_hierarchy, evaluation_points,
-                                                      precission_key, recall_key, n_ranked_docs_key,
-                                                      n_correct_ranked_docs_key,
-                                                      n_docs_in_category_key)
+                                                        ranked_documents_exp, gold_standard_categorization,
+                                                        category_hierarchy, evaluation_points,
+                                                        precission_key, recall_key, n_ranked_docs_key,
+                                                        n_correct_ranked_docs_key,
+                                                        n_docs_in_category_key)
 
     summarized_precissions_exp = evaluation.get_summarized_precissions(evaluation_exp, 
                                                                      evaluation_points,
@@ -127,24 +126,23 @@ bigram_delimeter = BIGRAM_DELIMETER
 
 
 #EXPERIMENT 0
-test_categories_exp_0 = test_categories
-reference_words_exp_0 = default_reference_words_dice
-context_words_exp_0 = default_context_words_dice
-experiment_0 = get_experiment(id,
-                              test_categories,
-                              tf_idf_map,
-                              reference_words_exp_0,
-                              context_words_exp_0,
-                              gold_standard_categorization,
-                              category_hierarchy,
-                              evaluation_points,
-                              precission_key,
-                              recall_key,
-                              n_ranked_docs_key,
-                              n_correct_ranked_docs_key,
-                              n_docs_in_category_key,
-                              evaluation_points,
-                              )
+# test_categories_exp_0 = test_categories
+# reference_words_exp_0 = default_reference_words_dice
+# context_words_exp_0 = default_context_words_dice
+# experiment_0 = get_experiment(id,
+#                               test_categories_exp_0,
+#                               tf_idf_map,
+#                               reference_words_exp_0,
+#                               context_words_exp_0,
+#                               gold_standard_categorization,
+#                               category_hierarchy,
+#                               evaluation_points,
+#                               precission_key,
+#                               recall_key,
+#                               n_ranked_docs_key,
+#                               n_correct_ranked_docs_key,
+#                               n_docs_in_category_key,
+#                               )
 
 # EXPERIMENT 1
 
@@ -157,7 +155,4 @@ for category in test_categories:
     r,c = keyword_setups.get_dice_keywords_filter_word_appear_in_bigram_with_category_name(category_name,
                                                                                            default_reference_words_dice,
                                                                                            default_context_words_dice,
-                                                                                           bigram_delimeter): 
-    
-
-
+                                                                                           bigram_delimeter)
