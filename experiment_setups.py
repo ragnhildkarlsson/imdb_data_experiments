@@ -35,6 +35,7 @@ TEST_DATA_CATEGORY_HIEARACHY = {'religion':{'christianity','buddhism','hinduism'
                                 'water_sport':{'surfing','swimming'}, 'motoring':{'motorcycle','car'}, 'nature':{'animals'},'art':{'cinema','theater','music','opera','classical_music', 'jazz', 'country_music','hip_hop', 'dance'}, 'music':{'opera','classical_music','jazz', 'country_music','hip_hop'},\
                                 'science':{'medicine','technology','psychology'},'medicine':{'disability'}, 'education':{'school','college'}, 'crime':{'prison','mafia','drugs','fraud','gambling','terrorism'}}
 
+
 class Experiment:
     def __init__(self,id,
                  test_categories,
@@ -58,6 +59,49 @@ class Experiment:
         self.summarized_precissions = summarized_precissions
         self.summarized_recalls =  summarized_recalls
 
+def get_experiment(id,
+                   test_categories,
+                   tf_idf_map,
+                   reference_words_exp,
+                   context_words_exp,
+                   gold_standard_categorization,
+                   category_hierarchy,
+                   evaluation_points,
+                   precission_key,
+                   recall_key,
+                   n_ranked_docs_key,
+                   n_correct_ranked_docs_key,
+                   n_docs_in_category_key,
+                   evaluation_points,
+                   ):
+    ranked_documents = document_categorizer.categorize(test_categories_exp, tf_idf_map, reference_words_exp, context_words_exp)
+    evaluation_exp = evaluation.evaluate_categorization(test_categories_exp,
+                                                      ranked_documents_exp, gold_standard_categorization,
+                                                      category_hierarchy, evaluation_points,
+                                                      precission_key, recall_key, n_ranked_docs_key,
+                                                      n_correct_ranked_docs_key,
+                                                      n_docs_in_category_key)
+
+    summarized_precissions_exp = evaluation.get_summarized_precissions(evaluation_exp, 
+                                                                     evaluation_points,
+                                                                     n_ranked_docs_key,
+                                                                     n_correct_ranked_docs_key)
+
+    summarized_recalls_exp = evaluation.get_summarized_recalls(evaluation_exp,
+                                                             evaluation_points,
+                                                             n_correct_ranked_docs_key,
+                                                             n_docs_in_category_key)
+    experiment = Experiment(id,test_categories_exp,
+                            reference_words_exp,
+                            context_words_exp,
+                            reference_words_exp,
+                            test_categories,
+                            evaluation_exp,
+                            evaluation_points,
+                            summarized_precissions_exp,
+                            summarized_recalls_exp)
+    return experiment
+
 # BUILD EXPERIMENTS
 
 #GENERAL_RESOURCES
@@ -79,42 +123,41 @@ recall_key = RECALL_KEY
 n_ranked_docs_key = N_RANKED_DOCS_KEY
 n_correct_ranked_docs_key = N_CORRECT_RANKED_DOCS_KEY
 n_docs_in_category_key = N_DOCS_IN_CATEGORY_KEY
+bigram_delimeter = BIGRAM_DELIMETER
 
 
 #EXPERIMENT 0
 test_categories_exp_0 = test_categories
 reference_words_exp_0 = default_reference_words_dice
 context_words_exp_0 = default_context_words_dice
-ranked_documents_exp_0 = document_categorizer.categorize(test_categories_exp_0, tf_idf_map, reference_words_exp_0, context_words_exp_0)
-evaluation_exp_0 = evaluation.evaluate_categorization(test_categories_exp_0,
-                                                      ranked_documents_exp_0, gold_standard_categorization,
-                                                      category_hierarchy, evaluation_points,
-                                                      precission_key, recall_key, n_ranked_docs_key,
-                                                      n_correct_ranked_docs_key,
-                                                      n_docs_in_category_key)
+experiment_0 = get_experiment(id,
+                              test_categories,
+                              tf_idf_map,
+                              reference_words_exp_0,
+                              context_words_exp_0,
+                              gold_standard_categorization,
+                              category_hierarchy,
+                              evaluation_points,
+                              precission_key,
+                              recall_key,
+                              n_ranked_docs_key,
+                              n_correct_ranked_docs_key,
+                              n_docs_in_category_key,
+                              evaluation_points,
+                              )
 
-summarized_precissions_exp_0 = evaluation.get_summarized_precissions(evaluation_exp_0, 
-                                                                     evaluation_points,
-                                                                     n_ranked_docs_key,
-                                                                     n_correct_ranked_docs_key)
+# EXPERIMENT 1
 
-summarized_recalls_exp_0 = evaluation.get_summarized_recalls(evaluation_exp_0,
-                                                             evaluation_points,
-                                                             n_correct_ranked_docs_key,
-                                                             n_docs_in_category_key)
-exp_0 = Experiment(0,test_categories_exp_0,
-                   reference_words_exp_0,
-                   context_words_exp_0,
-                   reference_words_exp_0,
-                   test_categories,
-                   evaluation_exp_0,
-                   evaluation_points,
-                   summarized_precissions_exp_0,
-                   summarized_recalls_exp_0)
+# Test move word in bigrams with category name to context words
 
-pprint.pprint(evaluation_exp_0)
-pprint.pprint(summarized_precissions_exp_0)
-pprint.pprint(summarized_recalls_exp_0)
-
+test_categories_exp_1 = test_categories
+reference_words_exp_1 = {}
+context_words_exp_2 = {}
+for category in test_categories:
+    r,c = keyword_setups.get_dice_keywords_filter_word_appear_in_bigram_with_category_name(category_name,
+                                                                                           default_reference_words_dice,
+                                                                                           default_context_words_dice,
+                                                                                           bigram_delimeter): 
+    
 
 
