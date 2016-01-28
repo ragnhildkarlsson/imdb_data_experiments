@@ -1,8 +1,11 @@
+import numpy as np
+
 import pprint
 import keyword_setups
 import document_categorizer
 import pickle_handler
 import evaluation
+
 
 TEST_DATA_ALL_CATEGORIES_LIST = "data/test_data_pickles/all_categories_list"
 TEST_DATA_TF_IDF_MAP_PICKLE = "data/test_data_pickles/tf_idf_map_pickle"
@@ -15,7 +18,7 @@ TEST_CATEGORIES = "data/test_data/test_categories"
 RESULT_DICE_BASED_RANKING = "result/dice_based_ranking"
 
 BASIC_REFERENCE_WORDS_DICE = "data/test_data_pickles/default_reference_words_dice"
-BASIC_CONTEXT_WORDS_DICE = "data/test_data_pickles/default_contexts_words_dice"
+BASIC_CONTEXT_WORDS_DICE = "data/test_data_pickles/default_context_words_dice"
 
 FREQUENT_WORDS_SET = "data/index/frequent_words"
 
@@ -41,8 +44,8 @@ class Experiment:
                  affected_categories,
                  evaluation,
                  evaluation_points,
-                 summerized_precissions,
-                 summerized_recalls):
+                 summarized_precissions,
+                 summarized_recalls):
 
         self.id = id
         self.test_categories = test_categories
@@ -51,16 +54,16 @@ class Experiment:
         self.categorization = categorization
         self.affected_categories = affected_categories
         self.evaluation = evaluation
-        self.evaluation_scale=evaluation_scale
-        self.summerized_precissions = summerized_precissions
-        self.summerized_recalls =  summerized_recalls
+        self.evaluation_points=evaluation_points
+        self.summarized_precissions = summarized_precissions
+        self.summarized_recalls =  summarized_recalls
 
 # BUILD EXPERIMENTS
 
 #GENERAL_RESOURCES
 test_categories = pickle_handler.load_pickle(TEST_CATEGORIES)
-default_dice_reference_words = pickle_handler.load_pickle(BASIC_REFERENCE_WORDS_DICE)
-default_dice_context_words = pickle_handler.load_pickle(BASIC_CONTEXT_WORDS_DICE)
+default_reference_words_dice = pickle_handler.load_pickle(BASIC_REFERENCE_WORDS_DICE)
+default_context_words_dice = pickle_handler.load_pickle(BASIC_CONTEXT_WORDS_DICE)
 tf_idf_map = pickle_handler.load_pickle(TEST_DATA_TF_IDF_MAP)
 gold_standard_categorization = pickle_handler.load_pickle(TEST_DATA_GOLD_STANDARD_CATEGORIZATION)
 category_hierarchy = TEST_DATA_CATEGORY_HIEARACHY
@@ -80,21 +83,21 @@ n_docs_in_category_key = N_DOCS_IN_CATEGORY_KEY
 
 #EXPERIMENT 0
 reference_words_exp_0 = default_reference_words_dice
-context_words_exp_0 = default_contexts_words_dice
+context_words_exp_0 = default_context_words_dice
 ranked_documents_exp_0 = document_categorizer.categorize(test_categories, tf_idf_map, reference_words_exp_0, context_words_exp_0)
 evaluation_exp_0 = evaluation.evaluate_categorization(test_categories,
-                                                ranked_documents, gold_standard_categorization,
-                                                category_hierarchy, evaluation_points,
-                                                precission_key, recall_key, n_ranked_docs_key,
-                                                n_correct_ranked_docs_key,
-                                                n_docs_in_category_key)
+                                                      ranked_documents_exp_0, gold_standard_categorization,
+                                                      category_hierarchy, evaluation_points,
+                                                      precission_key, recall_key, n_ranked_docs_key,
+                                                      n_correct_ranked_docs_key,
+                                                      n_docs_in_category_key)
 
-summerized_precissions_exp_0 = evaluation.get_summerized_precissions(evaluation, 
+summarized_precissions_exp_0 = evaluation.get_summarized_precissions(evaluation_exp_0, 
                                                                      evaluation_points,
                                                                      n_ranked_docs_key,
                                                                      n_correct_ranked_docs_key)
 
-summerized_recalls_exp_0 = evaluation.get_summerized_recalls(evaluation,
+summarized_recalls_exp_0 = evaluation.get_summarized_recalls(evaluation_exp_0,
                                                              evaluation_points,
                                                              n_correct_ranked_docs_key,
                                                              n_docs_in_category_key)
@@ -105,11 +108,11 @@ exp_0 = Experiment(0,test_categories,
                    test_categories,
                    evaluation_exp_0,
                    evaluation_points,
-                   summerized_precissions,
-                   summerized_recalls)
+                   summarized_precissions_exp_0,
+                   summarized_recalls_exp_0)
 
 pprint.pprint(evaluation_exp_0)
-pprint.pprint(summerized_recalls)
-pprint.pprint(summerized_recalls)
+pprint.pprint(summarized_recalls)
+pprint.pprint(summarized_precissions)
 
 

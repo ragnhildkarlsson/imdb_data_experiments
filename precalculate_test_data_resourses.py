@@ -14,7 +14,7 @@ TEST_DATA_TF_IDF_MAP = "data/test_data_pickles/tf_idf_map_pickle"
 TEST_DATA_DICE_BASED_KEYWORD_RANKING = "data/test_data_pickles/dice_based_keyword_rankning"
 
 BASIC_REFERENCE_WORDS_DICE = "data/test_data_pickles/default_reference_words_dice"
-BASIC_CONTEXT_WORDS_DICE = "data/test_data_pickles/default_contexts_words_dice"
+BASIC_CONTEXT_WORDS_DICE = "data/test_data_pickles/default_context_words_dice"
 TEST_CATEGORIES = "data/test_data/test_categories"
 
 

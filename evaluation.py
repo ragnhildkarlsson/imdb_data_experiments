@@ -19,7 +19,7 @@ def get_selection_of_ranked_docs(ranked_documents, evaluation_point):
     selected_ranked_documents = [ranked_doc for ranked_doc in ranked_documents if ranked_doc[1] >= min_score_in_selection]
     return selected_ranked_documents        
 
-def get_document_in_category(gold_standard_categorization, category_hierarchy):
+def get_document_in_category(category, gold_standard_categorization, category_hierarchy):
     documents_in_category = set(gold_standard_categorization[category])
     if category in category_hierarchy:
         for sub_category in category_hierarchy[category]:
@@ -31,21 +31,19 @@ def evaluate_categorization(test_categories,
                             category_hierarchy, evaluation_points,
                             precission_key, recall_key, n_ranked_docs_key,
                             n_correct_ranked_docs_key,
-                            n_docs_in_category_key,
-                            sumerized_precission_key,
-                            sumerized_recall_key):
+                            n_docs_in_category_key):
     evaluation = {}
     for category in test_categories:
         evaluation[category] = {}
-        ranked_documents = ranked_documents[category]
-        documents_in_category = get_document_in_category(gold_standard_categorization,category_hierarchy)
+        ranked_to_category = ranked_documents[category]
+        documents_in_category = get_document_in_category(category, gold_standard_categorization,category_hierarchy)
         n_docs_in_category = len(documents_in_category)            
         evaluation[category][n_docs_in_category_key] = n_docs_in_category
 
         for evaluation_point_index in range(len(evaluation_points)):
             evaluation_point = evaluation_points[evaluation_point_index]
             evaluation[category][evaluation_point_index] = {}
-            n_non_zero_ranked_docs = len(ranked_documents)
+            n_non_zero_ranked_docs = len(ranked_to_category)
             # handle the case of no ranked  docs
             if(n_non_zero_ranked_docs==0):
                 evaluation[category][evaluation_point_index][recall_key] = 0
@@ -54,7 +52,7 @@ def evaluate_categorization(test_categories,
                 evaluation[category][evaluation_point_index][n_correct_ranked_docs_key] = 0
                 continue  
             # create a selection for the evaluation point
-            selected_ranked_documents = get_selection_of_ranked_docs(ranked_documents,evaluation_point)
+            selected_ranked_documents = get_selection_of_ranked_docs(ranked_to_category,evaluation_point)
             n_docs_in_selection =  len(selected_ranked_documents)
             # evaluate precission and recall in selection
             n_correct_ranked_docs =0
@@ -68,30 +66,30 @@ def evaluate_categorization(test_categories,
         print('Evaluated category: '+category)
     return evaluation
 
-def get_summerized_precission(evaluation, evaluation_point_index, n_ranked_docs_key,
+def get_summarized_precission(evaluation, evaluation_point_index, n_ranked_docs_key,
                               n_correct_ranked_docs_key):
     sum_correct_ranked_docs = sum([evaluation[category][evaluation_point_index][n_correct_ranked_docs_key] for category in evaluation])
     sum_ranked_docs = sum([evaluation[category][evaluation_point_index][n_ranked_docs_key] for category in evaluation])
     precission = sum_correct_ranked_docs/sum_ranked_docs
     return precission
 
-def get_summerized_recall(evaluation,evaluation_point_index,
+def get_summarized_recall(evaluation,evaluation_point_index,
                           n_correct_ranked_docs_key, n_docs_in_category_key):
     sum_correct_ranked_docs = sum([evaluation[category][evaluation_point_index][n_correct_ranked_docs_key] for category in evaluation])
     n_categorized_docs = sum([evaluation[category][n_docs_in_category_key] for category in evaluation])
     recall = sum_correct_ranked_docs / n_categorized_docs
     return recall
 
-def get_summerized_racalls(evaluation,evaluation_points,n_correct_ranked_docs_key,n_docs_in_category_key):
-    summerized_recalls = {}
+def get_summarized_recalls(evaluation,evaluation_points,n_correct_ranked_docs_key,n_docs_in_category_key):
+    summarized_recalls = {}
     for evaluation_point_index in range(len(evaluation_points)):           
-        summerized_racalls[evaluation_point_index] = get_summerized_recall(evaluation, evaluation_point_index, n_correct_ranked_docs_key, n_docs_in_category_key)
-    return summerized_racalls
+        summarized_racalls[evaluation_point_index] = get_summarized_recall(evaluation, evaluation_point_index, n_correct_ranked_docs_key, n_docs_in_category_key)
+    return summarized_racalls
 
-def get_summerized_precissions(evaluation, evaluation_points, n_ranked_docs_key,
+def get_summarized_precissions(evaluation, evaluation_points, n_ranked_docs_key,
                               n_correct_ranked_docs_key):
-    summerized_precissions = {}
+    summarized_precissions = {}
     for evaluation_point_index in range(len(evaluation_points)): 
-        summerized_precissions[evaluation_point_index] = get_summerized_precission(evaluation, evaluation_point_index, n_ranked_docs_key, n_correct_ranked_docs_key,)
-    return get_summerized_precissions    
+        summarized_precissions[evaluation_point_index] = get_summarized_precission(evaluation, evaluation_point_index, n_ranked_docs_key, n_correct_ranked_docs_key,)
+    return get_summarized_precissions    
 

@@ -1,3 +1,4 @@
+from operator import itemgetter
 import math
 
 def get_tf_idf_map(document, max_freq, n_docs, index):
