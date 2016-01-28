@@ -107,7 +107,7 @@ def create_dice_ranked_keywords(n,categories, word_index, bigram_index, train_da
            
         #ensure category name have high rank
         dice_ranked_keywords = [ranked_word for ranked_word in dice_ranked_keywords if ranked_word[0] != category]
-        dice_ranked_keywords.append((category,1.0))
+        dice_ranked_keywords.insert(0,(category,1.0))
         categories_keywords_map[category] = dice_ranked_keywords
         n_categories_left = n_categories_left -1
     return categories_keywords_map

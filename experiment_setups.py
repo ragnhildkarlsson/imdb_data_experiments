@@ -22,7 +22,7 @@ BASIC_CONTEXT_WORDS_DICE = "data/test_data_pickles/default_context_words_dice"
 
 FREQUENT_WORDS_SET = "data/index/frequent_words"
 
-EVAL_SCALE = 0.2
+EVAL_SCALE = 0.1
 DEFAULT_WEIGHT_FILTER_LIMIT_DICE = 0.05
 PRECISSION_KEY = "precission"
 RECALL_KEY = "recall"
@@ -113,7 +113,8 @@ exp_0 = Experiment(0,test_categories_exp_0,
                    summarized_recalls_exp_0)
 
 pprint.pprint(evaluation_exp_0)
-pprint.pprint(summarized_recalls)
-pprint.pprint(summarized_precissions)
+pprint.pprint(summarized_precissions_exp_0)
+pprint.pprint(summarized_recalls_exp_0)
+
 
 

@@ -91,5 +91,5 @@ def get_summarized_precissions(evaluation, evaluation_points, n_ranked_docs_key,
     summarized_precissions = {}
     for evaluation_point_index in range(len(evaluation_points)): 
         summarized_precissions[evaluation_point_index] = get_summarized_precission(evaluation, evaluation_point_index, n_ranked_docs_key, n_correct_ranked_docs_key,)
-    return get_summarized_precissions    
+    return summarized_precissions    
 
