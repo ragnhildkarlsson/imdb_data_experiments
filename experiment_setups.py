@@ -82,10 +82,11 @@ n_docs_in_category_key = N_DOCS_IN_CATEGORY_KEY
 
 
 #EXPERIMENT 0
+test_categories_exp_0 = test_categories
 reference_words_exp_0 = default_reference_words_dice
 context_words_exp_0 = default_context_words_dice
-ranked_documents_exp_0 = document_categorizer.categorize(test_categories, tf_idf_map, reference_words_exp_0, context_words_exp_0)
-evaluation_exp_0 = evaluation.evaluate_categorization(test_categories,
+ranked_documents_exp_0 = document_categorizer.categorize(test_categories_exp_0, tf_idf_map, reference_words_exp_0, context_words_exp_0)
+evaluation_exp_0 = evaluation.evaluate_categorization(test_categories_exp_0,
                                                       ranked_documents_exp_0, gold_standard_categorization,
                                                       category_hierarchy, evaluation_points,
                                                       precission_key, recall_key, n_ranked_docs_key,
@@ -101,7 +102,7 @@ summarized_recalls_exp_0 = evaluation.get_summarized_recalls(evaluation_exp_0,
                                                              evaluation_points,
                                                              n_correct_ranked_docs_key,
                                                              n_docs_in_category_key)
-exp_0 = Experiment(0,test_categories,
+exp_0 = Experiment(0,test_categories_exp_0,
                    reference_words_exp_0,
                    context_words_exp_0,
                    reference_words_exp_0,
