@@ -15,7 +15,7 @@ TEST_DATA_DICE_BASED_KEYWORD_RANKING = "data/test_data_pickles/dice_based_keywor
 
 BASIC_REFERENCE_WORDS_DICE = "data/test_data_pickles/default_reference_words_dice"
 BASIC_CONTEXT_WORDS_DICE = "data/test_data_pickles/default_context_words_dice"
-TEST_CATEGORIES = "data/test_data/test_categories"
+TEST_CATEGORIES = "data/test_data_pickles/test_categories"
 
 
 FREQUENT_WORDS_SET = "data/index/frequent_words"

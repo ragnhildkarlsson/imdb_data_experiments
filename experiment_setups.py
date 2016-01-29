@@ -14,7 +14,7 @@ TEST_DATA_GOLD_STANDARD_CATEGORIZATION = "data/test_data_pickles/gold_standard_c
 TEST_DATA_DICE_BASED_KEYWORD_RANKING = "data/test_data_pickles/dice_based_keyword_rankning"
 TEST_DATA_TF_IDF_MAP = "data/test_data_pickles/tf_idf_map_pickle"
 
-TEST_CATEGORIES = "data/test_data/test_categories"
+TEST_CATEGORIES = "data/test_data_pickles/test_categories"
 RESULT_DICE_BASED_RANKING = "result/dice_based_ranking"
 
 BASIC_REFERENCE_WORDS_DICE = "data/test_data_pickles/default_reference_words_dice"

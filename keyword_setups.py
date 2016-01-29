@@ -10,10 +10,12 @@ def get_dice_keywords_filter_word_appear_in_bigram_with_category_name(category_n
                                                                       default_reference_words,
                                                                       default_context_words,
                                                                       bigram_delimeter):    
+    ['christianity', 'islam', 'christians', 'judaism']
+
     reference_words = default_reference_words
     context_words = default_context_words
     bigrams_with_category_name = set([r for r in reference_words if bigram_delimeter in r and category_name in r])
-    reference_words_in_bigram_with_category_name = set([r for r in reference_words if not bigram_delimeter in r and not r == category_name and not r in bigrams_with_category_name])
+    reference_words_in_bigram_with_category_name = set([r for r in reference_words if not bigram_delimeter in r and not r == category_name and r in bigrams_with_category_name])
     reference_words = [r for r in reference_words if r not in reference_words_in_bigram_with_category_name]
     for r in reference_words_in_bigram_with_category_name:
         context_words.insert(0,r)
