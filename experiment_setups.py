@@ -154,32 +154,32 @@ bigram_delimeter = BIGRAM_DELIMETER
 
 # EXPERIMENT 0.1
 
-test_categories_exp_01 = test_categories
-affected_categories_exp_01 = test_categories
-reference_words_exp_01 = {} 
+# test_categories_exp_01 = test_categories
+# affected_categories_exp_01 = test_categories
+# reference_words_exp_01 = {} 
 
-for category in test_categories:
-  reference_words_exp_01[category] = [category]
+# for category in test_categories:
+#   reference_words_exp_01[category] = [category]
   
-context_words_exp_01 = default_context_words_dice
-experiment_01 = get_experiment(id,
-                              test_categories_exp_01,
-                              affected_categories_exp_01,
-                              tf_idf_map,
-                              reference_words_exp_01,
-                              context_words_exp_01,
-                              gold_standard_categorization,
-                              category_hierarchy,
-                              evaluation_points,
-                              precission_key,
-                              recall_key,
-                              n_ranked_docs_key,
-                              n_correct_ranked_docs_key,
-                              n_docs_in_category_key,
-                              )
+# context_words_exp_01 = default_context_words_dice
+# experiment_01 = get_experiment(id,
+#                               test_categories_exp_01,
+#                               affected_categories_exp_01,
+#                               tf_idf_map,
+#                               reference_words_exp_01,
+#                               context_words_exp_01,
+#                               gold_standard_categorization,
+#                               category_hierarchy,
+#                               evaluation_points,
+#                               precission_key,
+#                               recall_key,
+#                               n_ranked_docs_key,
+#                               n_correct_ranked_docs_key,
+#                               n_docs_in_category_key,
+#                               )
 
-pprint.pprint(experiment_01.summarized_precissions)
-pprint.pprint(experiment_01.summarized_recalls)
+# pprint.pprint(experiment_01.summarized_precissions)
+# pprint.pprint(experiment_01.summarized_recalls)
 
 # EXPERIMENT 1
 
@@ -250,3 +250,38 @@ pprint.pprint(experiment_01.summarized_recalls)
 # pprint.pprint(experiment_2.summarized_precissions)
 # pprint.pprint(experiment_2.summarized_recalls)
 
+
+# # Experiment 3 
+
+test_categories_exp_3 = test_categories
+affected_categories_exp_3 = test_categories
+gavagai_suggested_terms = pickle_handler.load_pickle(GAVAGAI_COSINUS_SIMILARE_TERMS)
+
+reference_words_exp_3 = {} 
+context_words_exp_3 = default_context_words_dice
+
+for category in test_categories:
+  r,_ = keyword_setups.get_only_gavagai_paradigmatic_similare_keywords(gavagai_suggested_terms[category])
+  r.append(category)
+  r = r + default_reference_words_dice[category]
+  reference_words_exp_3[category] = r
+
+
+experiment_3 = get_experiment(1,
+                              test_categories_exp_3,
+                              affected_categories_exp_3,
+                              tf_idf_map,
+                              reference_words_exp_3,
+                              context_words_exp_3,
+                              gold_standard_categorization,
+                              category_hierarchy,
+                              evaluation_points,
+                              precission_key,
+                              recall_key,
+                              n_ranked_docs_key,
+                              n_correct_ranked_docs_key,
+                              n_docs_in_category_key,
+                              )
+
+pprint.pprint(experiment_3.summarized_precissions)
+pprint.pprint(experiment_3.summarized_recalls)
