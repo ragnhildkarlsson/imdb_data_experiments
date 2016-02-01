@@ -155,13 +155,20 @@ bigram_delimeter = BIGRAM_DELIMETER
 
 test_categories_exp_1 = test_categories
 gavagai_suggested_terms = pickle_handler.load_pickle(GAVAGAI_COSINUS_SIMILARE_TERMS)
-reference_words_exp_1, context_words_exp_1 = keyword_setups.get_only_gavagai_paradigmatic_similare_keywords(gavagai_suggested_terms)
+
+reference_words_exp_1 ={}, 
+context_words_exp_1 ={}
+
+for category in test_categories:
+  r,c = keyword_setups.et_only_gavagai_paradigmatic_similare_keywords(gavagai_suggested_terms[category])
+  reference_words_exp_1[category]
+  context_words_exp_1[category]
 
 experiment_1 = get_experiment(1,
-                              test_categories_exp_0,
+                              test_categories_exp_1,
                               tf_idf_map,
-                              reference_words_exp_0,
-                              context_words_exp_0,
+                              reference_words_exp_1,
+                              context_words_exp_1,
                               gold_standard_categorization,
                               category_hierarchy,
                               evaluation_points,
