@@ -127,18 +127,47 @@ n_docs_in_category_key = N_DOCS_IN_CATEGORY_KEY
 bigram_delimeter = BIGRAM_DELIMETER
 
 
-# EXPERIMENT 0
+# Experiment 0.0
 
-test_categories_exp_0 = test_categories
-affected_categories_exp_0 = test_categories
-reference_words_exp_0 = default_reference_words_dice
-context_words_exp_0 = default_context_words_dice
-experiment_0 = get_experiment(id,
-                              test_categories_exp_0,
-                              affected_categories_exp_0,
+# test_categories_exp_0 = test_categories
+# affected_categories_exp_0 = test_categories
+# reference_words_exp_0 = default_reference_words_dice
+# context_words_exp_0 = default_context_words_dice
+# experiment_0 = get_experiment(id,
+#                               test_categories_exp_0,
+#                               affected_categories_exp_0,
+#                               tf_idf_map,
+#                               reference_words_exp_0,
+#                               context_words_exp_0,
+#                               gold_standard_categorization,
+#                               category_hierarchy,
+#                               evaluation_points,
+#                               precission_key,
+#                               recall_key,
+#                               n_ranked_docs_key,
+#                               n_correct_ranked_docs_key,
+#                               n_docs_in_category_key,
+#                               )
+
+# pprint.pprint(experiment_0.summarized_precissions)
+# pprint.pprint(experiment_0.summarized_recalls)
+
+# EXPERIMENT 0.1
+
+test_categories_exp_01 = test_categories
+affected_categories_exp_01 = test_categories
+reference_words_exp_01 = {} 
+
+for category in test_categories:
+  reference_words_exp_01[category] = [category]
+  
+context_words_exp_01 = default_context_words_dice
+experiment_01 = get_experiment(id,
+                              test_categories_exp_01,
+                              affected_categories_exp_01,
                               tf_idf_map,
-                              reference_words_exp_0,
-                              context_words_exp_0,
+                              reference_words_exp_01,
+                              context_words_exp_01,
                               gold_standard_categorization,
                               category_hierarchy,
                               evaluation_points,
@@ -149,73 +178,75 @@ experiment_0 = get_experiment(id,
                               n_docs_in_category_key,
                               )
 
-pprint.pprint(experiment_0.summarized_precissions)
-pprint.pprint(experiment_0.summarized_recalls)
+pprint.pprint(experiment_01.summarized_precissions)
+pprint.pprint(experiment_01.summarized_recalls)
 
 # EXPERIMENT 1
 
 # Test move word in bigrams with category name to context words
 
-test_categories_exp_1 = test_categories
-affected_categories_exp_1 = test_categories
-gavagai_suggested_terms = pickle_handler.load_pickle(GAVAGAI_COSINUS_SIMILARE_TERMS)
+# test_categories_exp_1 = test_categories
+# affected_categories_exp_1 = test_categories
+# gavagai_suggested_terms = pickle_handler.load_pickle(GAVAGAI_COSINUS_SIMILARE_TERMS)
 
-reference_words_exp_1 = {} 
-context_words_exp_1 = {}
+# reference_words_exp_1 = {} 
+# context_words_exp_1 = {}
 
-for category in test_categories:
-  r,c = keyword_setups.get_only_gavagai_paradigmatic_similare_keywords(gavagai_suggested_terms[category])
-  reference_words_exp_1[category] = r
-  context_words_exp_1[category] = c
+# for category in test_categories:
+#   r,c = keyword_setups.get_only_gavagai_paradigmatic_similare_keywords(gavagai_suggested_terms[category])
+#   reference_words_exp_1[category] = r
+#   context_words_exp_1[category] = c
 
-experiment_1 = get_experiment(1,
-                              test_categories_exp_1,
-                              affected_categories_exp_1,
-                              tf_idf_map,
-                              reference_words_exp_1,
-                              context_words_exp_1,
-                              gold_standard_categorization,
-                              category_hierarchy,
-                              evaluation_points,
-                              precission_key,
-                              recall_key,
-                              n_ranked_docs_key,
-                              n_correct_ranked_docs_key,
-                              n_docs_in_category_key,
-                              )
+# experiment_1 = get_experiment(1,
+#                               test_categories_exp_1,
+#                               affected_categories_exp_1,
+#                               tf_idf_map,
+#                               reference_words_exp_1,
+#                               context_words_exp_1,
+#                               gold_standard_categorization,
+#                               category_hierarchy,
+#                               evaluation_points,
+#                               precission_key,
+#                               recall_key,
+#                               n_ranked_docs_key,
+#                               n_correct_ranked_docs_key,
+#                               n_docs_in_category_key,
+#                               )
 
-pprint.pprint(experiment_1.summarized_precissions)
-pprint.pprint(experiment_1.summarized_recalls)
+# pprint.pprint(experiment_1.summarized_precissions)
+# pprint.pprint(experiment_1.summarized_recalls)
 
-# Experiment 2 
+# # Experiment 2 
 
-test_categories_exp_2 = test_categories
-affected_categories_exp_2 = test_categories
-gavagai_suggested_terms = pickle_handler.load_pickle(GAVAGAI_COSINUS_SIMILARE_TERMS)
+# test_categories_exp_2 = test_categories
+# affected_categories_exp_2 = test_categories
+# gavagai_suggested_terms = pickle_handler.load_pickle(GAVAGAI_COSINUS_SIMILARE_TERMS)
 
-reference_words_exp_2 = {} 
-context_words_exp_2 = default_context_words_dice
+# reference_words_exp_2 = {} 
+# context_words_exp_2 = default_context_words_dice
 
-for category in test_categories:
-  r,_ = keyword_setups.get_only_gavagai_paradigmatic_similare_keywords(gavagai_suggested_terms[category])
-  reference_words_exp_2[category] = r
+# for category in test_categories:
+#   r,_ = keyword_setups.get_only_gavagai_paradigmatic_similare_keywords(gavagai_suggested_terms[category])
+#   r.append(category)
+#   reference_words_exp_2[category] = r
 
 
-experiment_2 = get_experiment(1,
-                              test_categories_exp_2,
-                              affected_categories_exp_2,
-                              tf_idf_map,
-                              reference_words_exp_2,
-                              context_words_exp_2,
-                              gold_standard_categorization,
-                              category_hierarchy,
-                              evaluation_points,
-                              precission_key,
-                              recall_key,
-                              n_ranked_docs_key,
-                              n_correct_ranked_docs_key,
-                              n_docs_in_category_key,
-                              )
+# experiment_2 = get_experiment(1,
+#                               test_categories_exp_2,
+#                               affected_categories_exp_2,
+#                               tf_idf_map,
+#                               reference_words_exp_2,
+#                               context_words_exp_2,
+#                               gold_standard_categorization,
+#                               category_hierarchy,
+#                               evaluation_points,
+#                               precission_key,
+#                               recall_key,
+#                               n_ranked_docs_key,
+#                               n_correct_ranked_docs_key,
+#                               n_docs_in_category_key,
+#                               )
 
-pprint.pprint(experiment_2.summarized_precissions)
-pprint.pprint(experiment_2.summarized_recalls)
+# pprint.pprint(experiment_2.summarized_precissions)
+# pprint.pprint(experiment_2.summarized_recalls)
+
