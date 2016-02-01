@@ -154,9 +154,9 @@ pprint.pprint(experiment_0.summarized_recalls)
 
 test_categories_exp_1 = test_categories
 gavagai_suggested_terms = pickle_handler.load_pickle(GAVAGAI_COSINUS_SIMILARE_TERMS)
-reference_words_exp_1, context_words_exp_1 = keyword_setups.get_only_gavagai_cosinus_similare_keywords(gavagai_suggested_terms)
+reference_words_exp_1, context_words_exp_1 = keyword_setups.get_only_gavagai_paradigmatic_similare_keywords(gavagai_suggested_terms)
 
-experiment_1 = get_experiment(id,
+experiment_1 = get_experiment(1,
                               test_categories_exp_0,
                               tf_idf_map,
                               reference_words_exp_0,
