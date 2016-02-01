@@ -19,6 +19,7 @@ RESULT_DICE_BASED_RANKING = "result/dice_based_ranking"
 
 BASIC_REFERENCE_WORDS_DICE = "data/test_data_pickles/default_reference_words_dice"
 BASIC_CONTEXT_WORDS_DICE = "data/test_data_pickles/default_context_words_dice"
+GAVAGAI_COSINUS_SIMILARE_TERMS = "data/gavagai_pickles/gavagai_cosinus_similare_terms"
 
 FREQUENT_WORDS_SET = "data/index/frequent_words"
 
@@ -125,34 +126,50 @@ n_docs_in_category_key = N_DOCS_IN_CATEGORY_KEY
 bigram_delimeter = BIGRAM_DELIMETER
 
 
-#EXPERIMENT 0
-# test_categories_exp_0 = test_categories
-# reference_words_exp_0 = default_reference_words_dice
-# context_words_exp_0 = default_context_words_dice
-# experiment_0 = get_experiment(id,
-#                               test_categories_exp_0,
-#                               tf_idf_map,
-#                               reference_words_exp_0,
-#                               context_words_exp_0,
-#                               gold_standard_categorization,
-#                               category_hierarchy,
-#                               evaluation_points,
-#                               precission_key,
-#                               recall_key,
-#                               n_ranked_docs_key,
-#                               n_correct_ranked_docs_key,
-#                               n_docs_in_category_key,
-#                               )
+EXPERIMENT 0
+test_categories_exp_0 = test_categories
+reference_words_exp_0 = default_reference_words_dice
+context_words_exp_0 = default_context_words_dice
+experiment_0 = get_experiment(id,
+                              test_categories_exp_0,
+                              tf_idf_map,
+                              reference_words_exp_0,
+                              context_words_exp_0,
+                              gold_standard_categorization,
+                              category_hierarchy,
+                              evaluation_points,
+                              precission_key,
+                              recall_key,
+                              n_ranked_docs_key,
+                              n_correct_ranked_docs_key,
+                              n_docs_in_category_key,
+                              )
+
+pprint.pprint(experiment_0.summarized_precissions)
+pprint.pprint(experiment_0.summarized_recalls)
 
 # EXPERIMENT 1
 
 # Test move word in bigrams with category name to context words
 
 test_categories_exp_1 = test_categories
-reference_words_exp_1 = {}
-context_words_exp_2 = {}
-for category in test_categories:
-    r,c = keyword_setups.get_dice_keywords_filter_word_appear_in_bigram_with_category_name(category,
-                                                                                           default_reference_words_dice[category],
-                                                                                           default_context_words_dice[category],
-                                                                                           bigram_delimeter)
+gavagai_suggested_terms = pickle_handler.load_pickle(GAVAGAI_COSINUS_SIMILARE_TERMS)
+reference_words_exp_1, context_words_exp_1 = keyword_setups.get_only_gavagai_cosinus_similare_keywords(gavagai_suggested_terms)
+
+experiment_1 = get_experiment(id,
+                              test_categories_exp_0,
+                              tf_idf_map,
+                              reference_words_exp_0,
+                              context_words_exp_0,
+                              gold_standard_categorization,
+                              category_hierarchy,
+                              evaluation_points,
+                              precission_key,
+                              recall_key,
+                              n_ranked_docs_key,
+                              n_correct_ranked_docs_key,
+                              n_docs_in_category_key,
+                              )
+
+pprint.pprint(experiment_1.summarized_precissions)
+pprint.pprint(experiment_1.summarized_recalls)
