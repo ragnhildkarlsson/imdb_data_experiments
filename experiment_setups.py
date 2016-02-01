@@ -62,6 +62,7 @@ class Experiment:
 
 def get_experiment(id,
                    test_categories_exp,
+                   affected_categories_exp,
                    tf_idf_map,
                    reference_words_exp,
                    context_words_exp,
@@ -95,7 +96,7 @@ def get_experiment(id,
                             reference_words_exp,
                             context_words_exp,
                             reference_words_exp,
-                            test_categories,
+                            affected_categories_exp,
                             evaluation_exp,
                             evaluation_points,
                             summarized_precissions_exp,
@@ -129,10 +130,12 @@ bigram_delimeter = BIGRAM_DELIMETER
 # EXPERIMENT 0
 
 # test_categories_exp_0 = test_categories
+# affected_categories_exp_0 = test_categories
 # reference_words_exp_0 = default_reference_words_dice
 # context_words_exp_0 = default_context_words_dice
 # experiment_0 = get_experiment(id,
 #                               test_categories_exp_0,
+#                               affected_categories_exp_0,
 #                               tf_idf_map,
 #                               reference_words_exp_0,
 #                               context_words_exp_0,
@@ -154,18 +157,20 @@ bigram_delimeter = BIGRAM_DELIMETER
 # Test move word in bigrams with category name to context words
 
 test_categories_exp_1 = test_categories
+affected_categories_exp_1 = test_categories
 gavagai_suggested_terms = pickle_handler.load_pickle(GAVAGAI_COSINUS_SIMILARE_TERMS)
 
-reference_words_exp_1 ={}, 
-context_words_exp_1 ={}
+reference_words_exp_1 = {} 
+context_words_exp_1 = {}
 
 for category in test_categories:
-  r,c = keyword_setups.et_only_gavagai_paradigmatic_similare_keywords(gavagai_suggested_terms[category])
-  reference_words_exp_1[category]
-  context_words_exp_1[category]
+  r,c = keyword_setups.get_only_gavagai_paradigmatic_similare_keywords(gavagai_suggested_terms[category])
+  reference_words_exp_1[category] = r
+  context_words_exp_1[category] = c
 
 experiment_1 = get_experiment(1,
                               test_categories_exp_1,
+                              affected_categories_exp_1,
                               tf_idf_map,
                               reference_words_exp_1,
                               context_words_exp_1,
