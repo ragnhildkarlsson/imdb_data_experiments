@@ -12,7 +12,7 @@ def get_default_keywords_dice(dice_ranked_keywords, weight_limit_reference_words
     context_words = [d[0] for d in dice_ranked_keywords if weight_limit_reference_words > d[1]]
     return reference_words, context_words
 
-def get_only_gavagai_cosinus_similare_keywords(gavagai_suggested_terms):    
+def get_only_gavagai_paradigmatic_similare_keywords(gavagai_suggested_terms):    
     gavagai_cosinus_similare_terms = sorted(gavagai_suggested_terms, key=itemgetter('sumCosine'))    
     gavagai_cosinus_similare_terms = [term["term"] for term in gavagai_cosinus_similare_terms]
     gavagai_cosinus_similare_terms[:100]
