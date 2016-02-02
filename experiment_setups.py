@@ -77,7 +77,7 @@ def get_experiment(id,
                    n_docs_in_category_key,
                    ):
     ranked_documents_exp = document_categorizer.categorize(test_categories_exp, tf_idf_map, reference_words_exp, context_words_exp)
-    evaluation_exp = evaluation.evaluate_categorization(test_categories_exp,
+    evaluation_exp = evaluation.get_threshold_optimized_evaluation(test_categories_exp,
                                                         ranked_documents_exp, gold_standard_categorization,
                                                         category_hierarchy, evaluation_points,
                                                         precission_key, recall_key, n_ranked_docs_key,
@@ -130,28 +130,28 @@ bigram_delimeter = BIGRAM_DELIMETER
 
 # Experiment 0.0
 
-# test_categories_exp_0 = test_categories
-# affected_categories_exp_0 = test_categories
-# reference_words_exp_0 = default_reference_words_dice
-# context_words_exp_0 = default_context_words_dice
-# experiment_0 = get_experiment(id,
-#                               test_categories_exp_0,
-#                               affected_categories_exp_0,
-#                               tf_idf_map,
-#                               reference_words_exp_0,
-#                               context_words_exp_0,
-#                               gold_standard_categorization,
-#                               category_hierarchy,
-#                               evaluation_points,
-#                               precission_key,
-#                               recall_key,
-#                               n_ranked_docs_key,
-#                               n_correct_ranked_docs_key,
-#                               n_docs_in_category_key,
-#                               )
+test_categories_exp_0 = test_categories
+affected_categories_exp_0 = test_categories
+reference_words_exp_0 = default_reference_words_dice
+context_words_exp_0 = default_context_words_dice
+experiment_0 = get_experiment(id,
+                              test_categories_exp_0,
+                              affected_categories_exp_0,
+                              tf_idf_map,
+                              reference_words_exp_0,
+                              context_words_exp_0,
+                              gold_standard_categorization,
+                              category_hierarchy,
+                              evaluation_points,
+                              precission_key,
+                              recall_key,
+                              n_ranked_docs_key,
+                              n_correct_ranked_docs_key,
+                              n_docs_in_category_key,
+                              )
 
-# pprint.pprint(experiment_0.summarized_precissions)
-# pprint.pprint(experiment_0.summarized_recalls)
+pprint.pprint(experiment_0.summarized_precissions)
+pprint.pprint(experiment_0.summarized_recalls)
 
 # EXPERIMENT 0.1
 
@@ -287,37 +287,37 @@ bigram_delimeter = BIGRAM_DELIMETER
 # pprint.pprint(experiment_3.summarized_precissions)
 # pprint.pprint(experiment_3.summarized_recalls)
 
-# Experiment_4  Move reference words occuring in bigram with category name to context words
-test_categories_exp_4 = test_categories
-affected_categories_exp_4 = []
+# # Experiment_4  Move reference words occuring in bigram with category name to context words
+# test_categories_exp_4 = test_categories
+# affected_categories_exp_4 = []
 
-reference_words_exp_4 = {}
-context_words_exp_4 ={}
-for category in test_categories:
-  filtered_reference_words, filtered_context_words = keyword_setups.get_dice_keyword_filter_1(category, BIGRAM_DELIMETER, default_reference_words_dice[category], default_context_words_dice[category])
-  if filtered_reference_words and filtered_context_words:
-    reference_words_exp_4[category] = filtered_reference_words
-    context_words_exp_4[category] = filtered_context_words
-    affected_categories_exp_4.append(category) 
-  else:
-    reference_words_exp_4[category] = default_reference_words_dice[category]
-    context_words_exp_4[category] = default_context_words_dice[category]
+# reference_words_exp_4 = {}
+# context_words_exp_4 ={}
+# for category in test_categories:
+#   filtered_reference_words, filtered_context_words = keyword_setups.get_dice_keyword_filter_1(category, BIGRAM_DELIMETER, default_reference_words_dice[category], default_context_words_dice[category])
+#   if filtered_reference_words and filtered_context_words:
+#     reference_words_exp_4[category] = filtered_reference_words
+#     context_words_exp_4[category] = filtered_context_words
+#     affected_categories_exp_4.append(category) 
+#   else:
+#     reference_words_exp_4[category] = default_reference_words_dice[category]
+#     context_words_exp_4[category] = default_context_words_dice[category]
 
-experiment_4 = get_experiment(4,
-                              test_categories_exp_4,
-                              affected_categories_exp_4,
-                              tf_idf_map,
-                              reference_words_exp_4,
-                              context_words_exp_4,
-                              gold_standard_categorization,
-                              category_hierarchy,
-                              evaluation_points,
-                              precission_key,
-                              recall_key,
-                              n_ranked_docs_key,
-                              n_correct_ranked_docs_key,
-                              n_docs_in_category_key,
-                              )
+# experiment_4 = get_experiment(4,
+#                               test_categories_exp_4,
+#                               affected_categories_exp_4,
+#                               tf_idf_map,
+#                               reference_words_exp_4,
+#                               context_words_exp_4,
+#                               gold_standard_categorization,
+#                               category_hierarchy,
+#                               evaluation_points,
+#                               precission_key,
+#                               recall_key,
+#                               n_ranked_docs_key,
+#                               n_correct_ranked_docs_key,
+#                               n_docs_in_category_key,
+#                               )
 
-pprint.pprint(experiment_4.summarized_precissions)
-pprint.pprint(experiment_4.summarized_recalls)
+# pprint.pprint(experiment_4.summarized_precissions)
+# pprint.pprint(experiment_4.summarized_recalls)

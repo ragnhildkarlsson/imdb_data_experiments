@@ -66,6 +66,79 @@ def evaluate_categorization(test_categories,
         print('Evaluated category: '+category)
     return evaluation
 
+def get_n_correct_ranked_documnets(ranked_to_category, documents_in_category):
+    n_correct_ranked_docs = 0
+    for doc in ranked_to_category:
+        if doc[0] in documents_in_category:
+            n_correct_ranked_docs +=1
+    return n_correct_ranked_docs
+
+def get_optimal_selection_indices(ranked_to_category, documents_in_category, precission_levels):
+    import pdb
+    pdb.set_trace()
+
+    precission_selction_map = {}
+    selection_index_precission_tuples = []
+    for selection_index in range(len(ranked_to_category)):
+        if selection_index == 0:
+            continue
+        selected_ranked_documents = ranked_to_category[:selection_index]
+        n_correct_ranked_docs =  get_n_correct_ranked_documnets(selected_ranked_documents, documents_in_category)
+        if n_correct_ranked_docs == 0:
+            continue
+        selection_index_precission_tuples.append((selection_index,(n_correct_ranked_docs/len(selected_ranked_documents))))
+    
+    if not selection_index_precission_tuples:
+        return [(precission_level,1) for precission_level in precission_levels]
+    #find optimal selections
+    selection_index_precission_tuples.reverse()
+    for precission_level in precission_levels:
+        diffs = [(selection[0], abs(selection[1] - precission_level)) for selection in selection_index_precission_tuples]
+        min_diff_selection =  min(diffs, key= itemgetter(1))
+        precission_selction_map[precission_level]= min_diff_selection[0]
+    return precission_selction_map
+
+def get_threshold_optimized_evaluation(test_categories,
+                                       ranked_documents, gold_standard_categorization,
+                                       category_hierarchy, evaluation_points,
+                                       precission_key, recall_key, n_ranked_docs_key,
+                                       n_correct_ranked_docs_key,
+                                       n_docs_in_category_key):
+
+    for category in test_categories:
+        evaluation[category] = {}
+        ranked_to_category = ranked_documents[category]
+        documents_in_category = get_document_in_category(category, gold_standard_categorization,category_hierarchy)
+        n_docs_in_category = len(documents_in_category)            
+        optimal_selection_indices_map = get_optimal_selection_indices()
+        evaluation[category][n_docs_in_category_key] = n_docs_in_category
+        for evaluation_point_index in range(len(evaluation_points)):
+            evaluation_point = evaluation_points[evaluation_point_index]
+            evaluation[category][evaluation_point_index] = {}
+            n_non_zero_ranked_docs = len(ranked_to_category)
+            # handle the case of no ranked  docs
+            if(n_non_zero_ranked_docs==0):
+                evaluation[category][evaluation_point_index][recall_key] = 0
+                evaluation[category][evaluation_point_index][precission_key] = 0
+                evaluation[category][evaluation_point_index][n_ranked_docs_key] = 0
+                evaluation[category][evaluation_point_index][n_correct_ranked_docs_key] = 0
+                continue  
+            # create a selection for the evaluation point
+            selection_index = optimal_selection_indices[evaluation_point]
+            selected_ranked_documents = ranked_to_category[:selection_index]
+            n_docs_in_selection =  len(selected_ranked_documents)
+            # evaluate precission and recall in selection
+            n_correct_ranked_docs =0
+            for doc in selected_ranked_documents:
+                if doc[0] in documents_in_category:
+                    n_correct_ranked_docs +=1
+            evaluation[category][evaluation_point_index][precission_key] = (n_correct_ranked_docs/n_docs_in_selection)
+            evaluation[category][evaluation_point_index][recall_key] = (n_correct_ranked_docs/n_docs_in_category)
+            evaluation[category][evaluation_point_index][n_correct_ranked_docs_key] = n_correct_ranked_docs
+            evaluation[category][evaluation_point_index][n_ranked_docs_key] = n_docs_in_selection
+        print('Evaluated category: '+category)
+    return evaluation
+
 def get_summarized_precission(evaluation, evaluation_point_index, n_ranked_docs_key,
                               n_correct_ranked_docs_key):
     sum_correct_ranked_docs = sum([evaluation[category][evaluation_point_index][n_correct_ranked_docs_key] for category in evaluation])
