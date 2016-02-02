@@ -251,28 +251,63 @@ bigram_delimeter = BIGRAM_DELIMETER
 # pprint.pprint(experiment_2.summarized_recalls)
 
 
-# # Experiment 3 
+# # Experiment 3 Combine all gavagai paradigmatic neighbours + dice as reference words + dice words as keywords 
 
-test_categories_exp_3 = test_categories
-affected_categories_exp_3 = test_categories
-gavagai_suggested_terms = pickle_handler.load_pickle(GAVAGAI_COSINUS_SIMILARE_TERMS)
+# test_categories_exp_3 = test_categories
+# affected_categories_exp_3 = test_categories
+# gavagai_suggested_terms = pickle_handler.load_pickle(GAVAGAI_COSINUS_SIMILARE_TERMS)
 
-reference_words_exp_3 = {} 
-context_words_exp_3 = default_context_words_dice
+# reference_words_exp_3 = {} 
+# context_words_exp_3 = default_context_words_dice
 
+# for category in test_categories:
+#   r,_ = keyword_setups.get_only_gavagai_paradigmatic_similare_keywords(gavagai_suggested_terms[category])
+#   r.append(category)
+#   r = r + default_reference_words_dice[category]
+#   reference_words_exp_3[category] = r
+
+
+# experiment_3 = get_experiment(1,
+#                               test_categories_exp_3,
+#                               affected_categories_exp_3,
+#                               tf_idf_map,
+#                               reference_words_exp_3,
+#                               context_words_exp_3,
+#                               gold_standard_categorization,
+#                               category_hierarchy,
+#                               evaluation_points,
+#                               precission_key,
+#                               recall_key,
+#                               n_ranked_docs_key,
+#                               n_correct_ranked_docs_key,
+#                               n_docs_in_category_key,
+#                               )
+
+# pprint.pprint(experiment_3.summarized_precissions)
+# pprint.pprint(experiment_3.summarized_recalls)
+
+# experiment_4  Move reference words occuring in bigram with category name to context words
+test_categories_exp_4 = test_categories
+affected_categories_exp_4 = []
+
+reference_words_exp_4 = {}
+context_words_exp_4 ={}
 for category in test_categories:
-  r,_ = keyword_setups.get_only_gavagai_paradigmatic_similare_keywords(gavagai_suggested_terms[category])
-  r.append(category)
-  r = r + default_reference_words_dice[category]
-  reference_words_exp_3[category] = r
+  filtered_reference_words, filtered_context_words = keyword_setups.get_dice_keyword_filter_1(category, BIGRAM_DELIMETER, default_reference_words_dice, default_context_words_dice)
+  if filtered_reference_words and filtered_context_words:
+    reference_words_exp_4[category] = filtered_reference_words
+    context_words_exp_4[category] = filtered_context_words
+    affected_categories.appen(category) 
+  else:
+    reference_words_exp_4[category] = default_reference_words_dice
+    context_words_exp_4[category] = default_context_words_dice
 
-
-experiment_3 = get_experiment(1,
-                              test_categories_exp_3,
-                              affected_categories_exp_3,
+experiment_4 = get_experiment(4,
+                              test_categories_exp_4,
+                              affected_categories_exp_4,
                               tf_idf_map,
-                              reference_words_exp_3,
-                              context_words_exp_3,
+                              reference_words_exp_4,
+                              context_words_exp_4,
                               gold_standard_categorization,
                               category_hierarchy,
                               evaluation_points,
@@ -283,5 +318,5 @@ experiment_3 = get_experiment(1,
                               n_docs_in_category_key,
                               )
 
-pprint.pprint(experiment_3.summarized_precissions)
-pprint.pprint(experiment_3.summarized_recalls)
+pprint.pprint(experiment_4.summarized_precissions)
+pprint.pprint(experiment_4.summarized_recalls)
