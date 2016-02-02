@@ -287,7 +287,7 @@ bigram_delimeter = BIGRAM_DELIMETER
 # pprint.pprint(experiment_3.summarized_precissions)
 # pprint.pprint(experiment_3.summarized_recalls)
 
-# experiment_4  Move reference words occuring in bigram with category name to context words
+# Experiment_4  Move reference words occuring in bigram with category name to context words
 test_categories_exp_4 = test_categories
 affected_categories_exp_4 = []
 
