@@ -86,10 +86,13 @@ def get_optimal_selection_indices(ranked_to_category, documents_in_category, pre
         selection_index_precission_tuples.append((selection_index,(n_correct_ranked_docs/len(selected_ranked_documents))))
     
     if not selection_index_precission_tuples:
-        return [(precission_level,1) for precission_level in precission_levels]
+        for precission_level_index in range(len(precission_levels)):
+            #Set to defaul minimal selection
+            precission_selction_map[precission_level_index]= 1
+        return precission_selction_map
     #find optimal selections
     selection_index_precission_tuples.reverse()
-    for precission_level_index in len(precission_levels):
+    for precission_level_index in range(len(precission_levels)):
         precission_level = precission_levels[precission_level_index]
         diffs = [(selection[0], abs(selection[1] - precission_level)) for selection in selection_index_precission_tuples]
         min_diff_selection =  min(diffs, key= itemgetter(1))
@@ -122,7 +125,7 @@ def get_threshold_optimized_evaluation(test_categories,
                 evaluation[category][evaluation_point_index][n_correct_ranked_docs_key] = 0
                 continue  
             # create a selection for the evaluation point
-            selection_index = optimal_selection_indices[evaluation_point_index]
+            selection_index = optimal_selection_indices_map[evaluation_point_index]
             selected_ranked_documents = ranked_to_category[:selection_index]
             n_docs_in_selection =  len(selected_ranked_documents)
             # evaluate precission and recall in selection
