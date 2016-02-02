@@ -74,9 +74,6 @@ def get_n_correct_ranked_documnets(ranked_to_category, documents_in_category):
     return n_correct_ranked_docs
 
 def get_optimal_selection_indices(ranked_to_category, documents_in_category, precission_levels):
-    import pdb
-    pdb.set_trace()
-
     precission_selction_map = {}
     selection_index_precission_tuples = []
     for selection_index in range(len(ranked_to_category)):
@@ -104,7 +101,7 @@ def get_threshold_optimized_evaluation(test_categories,
                                        precission_key, recall_key, n_ranked_docs_key,
                                        n_correct_ranked_docs_key,
                                        n_docs_in_category_key):
-
+    evaluation = {}
     for category in test_categories:
         evaluation[category] = {}
         ranked_to_category = ranked_documents[category]
