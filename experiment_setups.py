@@ -11,6 +11,7 @@ TEST_DATA_ALL_CATEGORIES_LIST = "data/test_data_pickles/all_categories_list"
 TEST_DATA_TF_IDF_MAP_PICKLE = "data/test_data_pickles/tf_idf_map_pickle"
 TEST_DATA_GOLD_STANDARD_CATEGORIZATION = "data/test_data_pickles/gold_standard_categorization_pickle"
 
+
 TEST_DATA_DICE_BASED_KEYWORD_RANKING = "data/test_data_pickles/dice_based_keyword_rankning"
 TEST_DATA_TF_IDF_MAP = "data/test_data_pickles/tf_idf_map_pickle"
 
@@ -293,14 +294,14 @@ affected_categories_exp_4 = []
 reference_words_exp_4 = {}
 context_words_exp_4 ={}
 for category in test_categories:
-  filtered_reference_words, filtered_context_words = keyword_setups.get_dice_keyword_filter_1(category, BIGRAM_DELIMETER, default_reference_words_dice, default_context_words_dice)
+  filtered_reference_words, filtered_context_words = keyword_setups.get_dice_keyword_filter_1(category, BIGRAM_DELIMETER, default_reference_words_dice[category], default_context_words_dice[category])
   if filtered_reference_words and filtered_context_words:
     reference_words_exp_4[category] = filtered_reference_words
     context_words_exp_4[category] = filtered_context_words
-    affected_categories.appen(category) 
+    affected_categories_exp_4.append(category) 
   else:
-    reference_words_exp_4[category] = default_reference_words_dice
-    context_words_exp_4[category] = default_context_words_dice
+    reference_words_exp_4[category] = default_reference_words_dice[category]
+    context_words_exp_4[category] = default_context_words_dice[category]
 
 experiment_4 = get_experiment(4,
                               test_categories_exp_4,

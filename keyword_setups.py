@@ -20,16 +20,17 @@ def get_dice_keyword_filter_1(category, bigram_delimeter, default_dice_reference
     filtered_reference_words = set()
     for reference_word in default_dice_reference_words:
         for bigram_with_category_name in bigrams_with_category_name:
-            if reference_word in bigrams_with_category_name and not reference_word == category and not bigram_delimeter in reference_word:
+            if reference_word in bigram_with_category_name and not reference_word == category and not bigram_delimeter in reference_word and not category in reference_word and not reference_word in category:
                 filtered_reference_words.add(reference_word)
     reference_words = [reference_word for reference_word in default_dice_reference_words if reference_word not in filtered_reference_words]
     filtered_reference_words = list(filtered_reference_words)
     context_words = default_dice_context_words + filtered_reference_words
     if not filtered_reference_words:
+        print(category)
+        print(filtered_reference_words)
+        print(reference_words)
         reference_words =[]
         context_words = [] 
-    print(category)
-    print(filtered_reference_words)
     return reference_words, context_words
 
     
