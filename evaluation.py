@@ -89,10 +89,11 @@ def get_optimal_selection_indices(ranked_to_category, documents_in_category, pre
         return [(precission_level,1) for precission_level in precission_levels]
     #find optimal selections
     selection_index_precission_tuples.reverse()
-    for precission_level in precission_levels:
+    for precission_level_index in len(precission_levels):
+        precission_level = precission_levels[precission_level_index]
         diffs = [(selection[0], abs(selection[1] - precission_level)) for selection in selection_index_precission_tuples]
         min_diff_selection =  min(diffs, key= itemgetter(1))
-        precission_selction_map[precission_level]= min_diff_selection[0]
+        precission_selction_map[precission_level_index]= min_diff_selection[0]
     return precission_selction_map
 
 def get_threshold_optimized_evaluation(test_categories,
@@ -107,7 +108,7 @@ def get_threshold_optimized_evaluation(test_categories,
         ranked_to_category = ranked_documents[category]
         documents_in_category = get_document_in_category(category, gold_standard_categorization,category_hierarchy)
         n_docs_in_category = len(documents_in_category)            
-        optimal_selection_indices_map = get_optimal_selection_indices()
+        optimal_selection_indices_map = get_optimal_selection_indices(ranked_to_category,documents_in_category,evaluation_points)
         evaluation[category][n_docs_in_category_key] = n_docs_in_category
         for evaluation_point_index in range(len(evaluation_points)):
             evaluation_point = evaluation_points[evaluation_point_index]
@@ -121,7 +122,7 @@ def get_threshold_optimized_evaluation(test_categories,
                 evaluation[category][evaluation_point_index][n_correct_ranked_docs_key] = 0
                 continue  
             # create a selection for the evaluation point
-            selection_index = optimal_selection_indices[evaluation_point]
+            selection_index = optimal_selection_indices[evaluation_point_index]
             selected_ranked_documents = ranked_to_category[:selection_index]
             n_docs_in_selection =  len(selected_ranked_documents)
             # evaluate precission and recall in selection
