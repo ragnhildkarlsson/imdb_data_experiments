@@ -130,7 +130,7 @@ bigram_delimeter = BIGRAM_DELIMETER
 
 # Experiment 0.0
 
-test_categories_exp_0 = [test_categories[0]]
+test_categories_exp_0 = test_categories[:2]
 affected_categories_exp_0 = test_categories
 reference_words_exp_0 = default_reference_words_dice
 context_words_exp_0 = default_context_words_dice
