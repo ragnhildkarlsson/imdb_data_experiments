@@ -45,10 +45,9 @@ class Experiment:
                  context_words,
                  categorization,
                  affected_categories,
-                 evaluation,
-                 evaluation_points,
-                 summarized_precissions,
-                 summarized_recalls):
+                 percentage_level_evaluation,
+                 precission_level_evaluation,
+                 evaluation_levels):
 
         self.id = id
         self.test_categories = test_categories
@@ -56,11 +55,10 @@ class Experiment:
         self.context_words = context_words
         self.categorization = categorization
         self.affected_categories = affected_categories
-        self.evaluation = evaluation
-        self.evaluation_points=evaluation_points
-        self.summarized_precissions = summarized_precissions
-        self.summarized_recalls =  summarized_recalls
-
+        self.percentage_level_evaluation = percentage_level_evaluation
+        self.precission_level_evaluation = precission_level_evaluation
+        self.evaluation_levels=evaluation_levels
+ 
 def get_experiment(id,
                    test_categories_exp,
                    affected_categories_exp,
@@ -69,7 +67,7 @@ def get_experiment(id,
                    context_words_exp,
                    gold_standard_categorization,
                    category_hierarchy,
-                   evaluation_points,
+                   evaluation_levels,
                    precission_key,
                    recall_key,
                    n_ranked_docs_key,
@@ -77,31 +75,35 @@ def get_experiment(id,
                    n_docs_in_category_key,
                    ):
     ranked_documents_exp = document_categorizer.categorize(test_categories_exp, tf_idf_map, reference_words_exp, context_words_exp)
-    evaluation_exp = evaluation.get_threshold_optimized_evaluation(test_categories_exp,
-                                                        ranked_documents_exp, gold_standard_categorization,
-                                                        category_hierarchy, evaluation_points,
-                                                        precission_key, recall_key, n_ranked_docs_key,
-                                                        n_correct_ranked_docs_key,
-                                                        n_docs_in_category_key)
+    percentage_selections = evaluation.get_percentage_selection_indices(ranked_documents_exp,evaluation_levels)
+    precission_selections = evaluation.get_precission_selection_indices(ranked_to_category, documents_in_category, precission_levels)
 
-    summarized_precissions_exp = evaluation.get_summarized_precissions(evaluation_exp, 
-                                                                     evaluation_points,
-                                                                     n_ranked_docs_key,
-                                                                     n_correct_ranked_docs_key)
+    percentage_evaluation_exp = get_evaluation(test_categories,
+                                               ranked_documents_exp, gold_standard_categorization,
+                                               category_hierarchy, percentage_selections,
+                                               precission_key, recall_key, n_ranked_docs_key,
+                                               n_correct_ranked_docs_key,
+                                               n_docs_in_category_key,
+                                               )
 
-    summarized_recalls_exp = evaluation.get_summarized_recalls(evaluation_exp,
-                                                             evaluation_points,
-                                                             n_correct_ranked_docs_key,
-                                                             n_docs_in_category_key)
+    precission_evaluation_exp = get_evaluation(test_categories,
+                                               ranked_documents_exp, gold_standard_categorization,
+                                               category_hierarchy, precission_selections,
+                                               precission_key, recall_key, n_ranked_docs_key,
+                                               n_correct_ranked_docs_key,
+                                               n_docs_in_category_key,
+                                               )
+
     experiment = Experiment(id,test_categories_exp,
                             reference_words_exp,
                             context_words_exp,
                             reference_words_exp,
+                            ranked_documents_exp,                            
                             affected_categories_exp,
-                            evaluation_exp,
-                            evaluation_points,
-                            summarized_precissions_exp,
-                            summarized_recalls_exp)
+                            percentage_evaluation_exp,
+                            precission_evaluation_exp,
+                            evaluation_levels)
+
     return experiment
 
 # BUILD EXPERIMENTS
@@ -114,9 +116,9 @@ tf_idf_map = pickle_handler.load_pickle(TEST_DATA_TF_IDF_MAP)
 gold_standard_categorization = pickle_handler.load_pickle(TEST_DATA_GOLD_STANDARD_CATEGORIZATION)
 category_hierarchy = TEST_DATA_CATEGORY_HIEARACHY
 
-evaluation_points = list(np.arange(0,1,EVAL_SCALE))
-evaluation_points.append(1.0)
-evaluation_points.pop(0)
+evaluation_levels = list(np.arange(0,1,EVAL_SCALE))
+evaluation_levels.append(1.0)
+evaluation_levels.pop(0)
 
 category_hierarchy = TEST_DATA_CATEGORY_HIEARACHY
 
@@ -128,12 +130,13 @@ n_docs_in_category_key = N_DOCS_IN_CATEGORY_KEY
 bigram_delimeter = BIGRAM_DELIMETER
 
 
-# Experiment 0.0
+# Experiment 0
 
-test_categories_exp_0 = test_categories[:2]
-affected_categories_exp_0 = test_categories
+test_categories_exp_0 = [test_categories[0]]
+affected_categories_exp_0 = [test_categories[0]]
 reference_words_exp_0 = default_reference_words_dice
 context_words_exp_0 = default_context_words_dice
+
 experiment_0 = get_experiment(id,
                               test_categories_exp_0,
                               affected_categories_exp_0,
@@ -142,7 +145,7 @@ experiment_0 = get_experiment(id,
                               context_words_exp_0,
                               gold_standard_categorization,
                               category_hierarchy,
-                              evaluation_points,
+                              evaluation_levels,
                               precission_key,
                               recall_key,
                               n_ranked_docs_key,
@@ -150,8 +153,35 @@ experiment_0 = get_experiment(id,
                               n_docs_in_category_key,
                               )
 
-pprint.pprint(experiment_0.summarized_precissions)
+
+get_summarized_precissions(test_categories, evaluation, evaluation_level_indices, n_ranked_docs_key, n_correct_ranked_docs_key)
+summarized_precission_percentage_levels = evaluation.get_summarized_precissions(test_categories_exp_0,
+                                                                                experimnent_0.percentage_level_evaluation,
+                                                                                evaluation_levels,
+                                                                                n_ranked_docs_key,
+                                                                                n_correct_ranked_docs_key)
+
+summarized_recells_percentage_levels = evaluationget_summarized_recalls(test_categories_exp_0,
+                                                                        experimnent_0.percentage_level_evaluation,
+                                                                        evaluation_levels,
+                                                                        n_correct_ranked_docs_key,
+                                                                        n_docs_in_category_key)
+
+summarized_precission_precission_levels = evaluation.get_summarized_precissions(test_categories_exp_0,
+                                                                                experimnent_0.precission_level_evaluation,
+                                                                                evaluation_levels,
+                                                                                n_ranked_docs_key,
+                                                                                n_correct_ranked_docs_key)
+
+summarized_recells_precission_levels = evaluation.get_summarized_recalls(test_categories_exp_0,
+                                                                         experimnent_0.precission_level_evaluation,
+                                                                         evaluation_levels,
+                                                                         n_correct_ranked_docs_key,
+                                                                         n_docs_in_category_key)
+pprint.pprint(summarized_percentage_levels_precissions)
 pprint.pprint(experiment_0.summarized_recalls)
+
+# EXPERIMENT 1
 
 # EXPERIMENT 0.1
 
