@@ -74,9 +74,13 @@ def get_experiment(id,
                    n_correct_ranked_docs_key,
                    n_docs_in_category_key,
                    ):
+    
     ranked_documents_exp = document_categorizer.categorize(test_categories_exp, tf_idf_map, reference_words_exp, context_words_exp)
-    percentage_selections = evaluation.get_percentage_selection_indices(ranked_documents_exp,evaluation_levels)
-    precission_selections = evaluation.get_precission_selection_indices(ranked_to_category, documents_in_category, precission_levels)
+    percentage_selections = {}
+    precission_selections = {}
+    for category in test_categories_exp:
+          percentage_selections[category] = evaluation.get_percentage_selection_indices(ranked_documents_exp[category], evaluation_levels)
+          precission_selections[category] = evaluation.get_precission_selection_indices(ranked_documents_exp[category], gold_standard_categorization[category], evaluation_levels)
 
     percentage_evaluation_exp = get_evaluation(test_categories,
                                                ranked_documents_exp, gold_standard_categorization,
