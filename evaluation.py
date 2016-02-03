@@ -105,8 +105,12 @@ def get_evaluation(test_categories,
         
         evaluation[category][n_docs_in_category_key] = n_docs_in_category
         for evaluation_level_index in range(len(evaluation_levels)):
-            evaluation_selection_index = evaluation_selections[category][evaluation_level_index] 
-            selected_ranked_documents =ranked_documents[evaluation_selection_index]            
+            evaluation_selection_index = evaluation_selections[category][evaluation_level_index]
+            if evaluation_selection_index == 0:
+                selected_ranked_documents = []
+            else:     
+                selected_ranked_documents =ranked_to_category[:evaluation_selection_index]            
+            
             n_docs_in_selection =  len(selected_ranked_documents)
             # evaluate precission and recall in selection
             n_correct_ranked_docs = get_n_correct_ranked_documents(selected_ranked_documents, documents_in_category)
