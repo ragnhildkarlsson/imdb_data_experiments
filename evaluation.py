@@ -91,9 +91,9 @@ def get_evaluation(test_categories,
                    precission_key, recall_key, n_ranked_docs_key,
                    n_correct_ranked_docs_key,
                    n_docs_in_category_key,
+                   evaluation_levels,
                    ):
     evaluation = {}
-    evaluation_level_indices = list(evaluation_selections.keys())
     for category in test_categories:
         evaluation[category] = {}
         
@@ -104,7 +104,7 @@ def get_evaluation(test_categories,
         n_docs_in_category = len(documents_in_category)            
         
         evaluation[category][n_docs_in_category_key] = n_docs_in_category
-        for evaluation_level_index in evaluation_level_indices:
+        for evaluation_level_index in range(len(evaluation_levels)):
             evaluation_selection_index = evaluation_selections[category][evaluation_level_index] 
             selected_ranked_documents =ranked_documents[evaluation_selection_index]            
             n_docs_in_selection =  len(selected_ranked_documents)
@@ -119,20 +119,20 @@ def get_evaluation(test_categories,
         print('Evaluated category: '+ category)
 
 
-def get_summarized_precissions(test_categories, evaluation, evaluation_level_indices, n_ranked_docs_key, n_correct_ranked_docs_key):
+def get_summarized_precissions(test_categories, evaluation, evaluation_levels, n_ranked_docs_key, n_correct_ranked_docs_key):
     summarized_precissions = {}
 
-    for evaluation_level_index in evaluation_level_indices: 
+    for evaluation_level_index in range(len(evaluation_levels)): 
         sum_correct_ranked_docs = sum([evaluation[category][evaluation_level_index][n_correct_ranked_docs_key] for category in test_categories])
         sum_ranked_docs = sum([evaluation[category][evaluation_level_index][n_ranked_docs_key] for category in test_categories])
         precission = sum_correct_ranked_docs/sum_ranked_docs
         summarized_precissions[evaluation_level_index] = precission
     return summarized_precissions    
 
-def get_summarized_recalls(test_categories, evaluation, evaluation_indices, n_correct_ranked_docs_key, n_docs_in_category_key):
+def get_summarized_recalls(test_categories, evaluation, evaluation_levels, n_correct_ranked_docs_key, n_docs_in_category_key):
     summarized_recalls = {}    
     total_n_of_classifications = sum([evaluation[category][n_docs_in_category_key] for category in test_categories])  
-    for evaluation_level_index in evaluation_indices:   
-        total_n_of_correct_classified_documents =  sum([evaluation[category][n_docs_in_category_key][_correct_ranked_docs_key] for category in test_categories])
+    for evaluation_level_index in range(len(evaluation_levels)):   
+        total_n_of_correct_classified_documents =  sum([evaluation[category][evaluation_level_index][correct_ranked_docs_key] for category in test_categories])
         summarized_recalls[evaluation_level_index] = total_n_of_correct_classified_documents/total_n_of_classifications
     return summarized_recalls

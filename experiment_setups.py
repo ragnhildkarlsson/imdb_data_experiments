@@ -82,21 +82,23 @@ def get_experiment(id,
           percentage_selections[category] = evaluation.get_percentage_selection_indices(ranked_documents_exp[category], evaluation_levels)
           precission_selections[category] = evaluation.get_precission_selection_indices(ranked_documents_exp[category], gold_standard_categorization[category], evaluation_levels)
 
-    percentage_evaluation_exp = get_evaluation(test_categories,
-                                               ranked_documents_exp, gold_standard_categorization,
-                                               category_hierarchy, percentage_selections,
-                                               precission_key, recall_key, n_ranked_docs_key,
-                                               n_correct_ranked_docs_key,
-                                               n_docs_in_category_key,
-                                               )
+    percentage_evaluation_exp = evaluation.get_evaluation(test_categories,
+                                                           ranked_documents_exp, gold_standard_categorization,
+                                                           category_hierarchy, percentage_selections,
+                                                           precission_key, recall_key, n_ranked_docs_key,
+                                                           n_correct_ranked_docs_key,
+                                                           n_docs_in_category_key,
+                                                           evaluation_levels
+                                                           )
 
-    precission_evaluation_exp = get_evaluation(test_categories,
-                                               ranked_documents_exp, gold_standard_categorization,
-                                               category_hierarchy, precission_selections,
-                                               precission_key, recall_key, n_ranked_docs_key,
-                                               n_correct_ranked_docs_key,
-                                               n_docs_in_category_key,
-                                               )
+    precission_evaluation_exp = evaluation.get_evaluation(test_categories,
+                                                           ranked_documents_exp, gold_standard_categorization,
+                                                           category_hierarchy, precission_selections,
+                                                           precission_key, recall_key, n_ranked_docs_key,
+                                                           n_correct_ranked_docs_key,
+                                                           n_docs_in_category_key,
+                                                           evaluation_levels
+                                                           )
 
     experiment = Experiment(id,test_categories_exp,
                             reference_words_exp,
