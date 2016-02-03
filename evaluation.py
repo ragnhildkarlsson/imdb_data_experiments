@@ -64,13 +64,15 @@ def get_precission_selection_indices(ranked_to_category, documents_in_category, 
 def get_percentage_selection_indices(ranked_documents, percentage_levels):
     percentage_selection_map = {}
     for percentage_level_index in range(len(percentage_levels)):
+        if not ranked_documents:
+            percentage_selection_map[percentage_level_index] = 0
         percentage_level = percentage_levels[percentage_level_index]
         min_score = ranked_documents[-1][1]
         max_score = ranked_documents[0][1]
         score_range = max_score-min_score
         min_score_in_selection = min_score + ((1 - percentage_level)*score_range)
         higer_score_selection_indices = [selection_index+1 for selection_index in range(len(ranked_documents)) if ranked_documents[selection_index][1] >= min_score_in_selection]
-        higer_score_selection_indices.sort(reverse = True)
+        higer_score_selection_indices.sort(reverse = True)        
         if not higer_score_selection_indices:
             percentage_selection_map[percentage_level_index] = 0        
         else:
