@@ -82,7 +82,7 @@ def get_experiment(id,
           percentage_selections[category] = evaluation.get_percentage_selection_indices(ranked_documents_exp[category], evaluation_levels)
           precission_selections[category] = evaluation.get_precission_selection_indices(ranked_documents_exp[category], gold_standard_categorization[category], evaluation_levels)
 
-    percentage_evaluation_exp = evaluation.get_evaluation(test_categories,
+    percentage_evaluation_exp = evaluation.get_evaluation(test_categories_exp,
                                                            ranked_documents_exp, gold_standard_categorization,
                                                            category_hierarchy, percentage_selections,
                                                            precission_key, recall_key, n_ranked_docs_key,
@@ -91,7 +91,7 @@ def get_experiment(id,
                                                            evaluation_levels
                                                            )
 
-    precission_evaluation_exp = evaluation.get_evaluation(test_categories,
+    precission_evaluation_exp = evaluation.get_evaluation(test_categories_exp,
                                                            ranked_documents_exp, gold_standard_categorization,
                                                            category_hierarchy, precission_selections,
                                                            precission_key, recall_key, n_ranked_docs_key,
@@ -100,16 +100,15 @@ def get_experiment(id,
                                                            evaluation_levels
                                                            )
 
-    experiment = Experiment(id,test_categories_exp,
+    experiment = Experiment(id,
+                            test_categories_exp,
                             reference_words_exp,
                             context_words_exp,
-                            reference_words_exp,
                             ranked_documents_exp,                            
                             affected_categories_exp,
                             percentage_evaluation_exp,
                             precission_evaluation_exp,
                             evaluation_levels)
-
     return experiment
 
 # BUILD EXPERIMENTS
