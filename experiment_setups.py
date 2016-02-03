@@ -162,25 +162,25 @@ experiment_0 = get_experiment(id,
 
 
 sum_precissions_percentage_levels_exp_0 = evaluation.get_summarized_precissions(test_categories_exp_0,
-                                                                                experimnent_0.percentage_level_evaluation,
+                                                                                experiment_0.percentage_level_evaluation,
                                                                                 evaluation_levels,
                                                                                 n_ranked_docs_key,
                                                                                 n_correct_ranked_docs_key)
 
 sum_precissions_precission_levels_exp_0 = evaluation.get_summarized_precissions(test_categories_exp_0,
-                                                                                experimnent_0.precission_level_evaluation,
+                                                                                experiment_0.precission_level_evaluation,
                                                                                 evaluation_levels,
                                                                                 n_ranked_docs_key,
                                                                                 n_correct_ranked_docs_key)
 
 sum_recalls_percentage_levels_exp_0 = evaluationget_summarized_recalls(test_categories_exp_0,
-                                                                      experimnent_0.percentage_level_evaluation,
+                                                                      experiment_0.percentage_level_evaluation,
                                                                       evaluation_levels,
                                                                       n_correct_ranked_docs_key,
                                                                       n_docs_in_category_key)
 
 sum_recells_precission_levels_exp_0 = evaluation.get_summarized_recalls(test_categories_exp_0,
-                                                                        experimnent_0.precission_level_evaluation,
+                                                                        experiment_0.precission_level_evaluation,
                                                                         evaluation_levels,
                                                                         n_correct_ranked_docs_key,
                                                                         n_docs_in_category_key)
