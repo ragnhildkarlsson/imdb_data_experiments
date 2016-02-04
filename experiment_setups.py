@@ -173,7 +173,7 @@ sum_precissions_precission_levels_exp_0 = evaluation.get_summarized_precissions(
                                                                                 n_ranked_docs_key,
                                                                                 n_correct_ranked_docs_key)
 
-sum_recalls_percentage_levels_exp_0 = evaluationget_summarized_recalls(test_categories_exp_0,
+sum_recalls_percentage_levels_exp_0 = evaluation.get_summarized_recalls(test_categories_exp_0,
                                                                       experiment_0.percentage_level_evaluation,
                                                                       evaluation_levels,
                                                                       n_correct_ranked_docs_key,
@@ -187,7 +187,7 @@ sum_recells_precission_levels_exp_0 = evaluation.get_summarized_recalls(test_cat
 pprint.pprint(sum_precissions_percentage_levels_exp_0)
 pprint.pprint(sum_recalls_percentage_levels_exp_0)
 pprint.pprint(sum_precissions_precission_levels_exp_0)
-pprint.pprit(sum_recells_precission_levels_exp_0)
+pprint.pprint(sum_recells_precission_levels_exp_0)
 
 # EXPERIMENT 1
 

@@ -135,7 +135,7 @@ def get_summarized_precissions(test_categories, evaluation, evaluation_levels, n
         sum_ranked_docs = sum([evaluation[category][evaluation_level_index][n_ranked_docs_key] for category in test_categories])
         if sum_ranked_docs == 0:
             precission = 0
-            pprint.pprint(evaluation)
+            print("Warning no ranked documents in evalution")
         else:
             precission = sum_correct_ranked_docs/sum_ranked_docs
         summarized_precissions[evaluation_level_index] = precission
